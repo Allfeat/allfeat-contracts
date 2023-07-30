@@ -1,0 +1,40 @@
+[package]
+name = "allfeat_contracts_lang_macros"
+version = "0.1.0"
+authors = ["Allfeat labs <tech@allfeat.com>"]
+edition = "2021"
+
+license = "MIT"
+repository = "https://github.com/allfeat/allfeat-contracts"
+homepage = "https://allfeat.network/"
+description = "Allfeat macros to extend functionality of the ink!."
+keywords = ["wasm", "allfeat", "smart-contracts", "blockchain", "ink"]
+categories = ["no-std", "embedded"]
+include = ["Cargo.toml", "src/**/*.rs"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+allfeat_contracts_lang_codegen = { version = "~0.1.0", path = "../codegen", default-features = false }
+syn = "1"
+proc-macro2 = "1"
+synstructure = "0.12"
+
+[dev-dependencies]
+ink = { version = "4.2.1", default-features = false}
+
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2.6", default-features = false, features = ["derive"] }
+
+allfeat = { package = "allfeat_contracts_lang", path = "..", default-features = false }
+
+[lib]
+name = "allfeat_contracts_lang_macro"
+path = "src/lib.rs"
+proc-macro = true
+
+[features]
+default = ["std"]
+std = [
+    "allfeat_contracts_lang_codegen/std",
+]

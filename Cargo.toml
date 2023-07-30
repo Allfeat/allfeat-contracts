@@ -1,0 +1,50 @@
+[workspace]
+members = [
+    "lang",
+]
+
+exclude = [
+    "examples",
+]
+
+[package]
+name = "allfeat-contracts"
+version = "0.1.0"
+authors = ["Allfeat labs <tech@allfeat.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Import ink!
+ink = { version = "4.2.1", default-features = false}
+
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
+
+# Allfeat contracts macros
+allfeat_contracts_lang = { version = "0.1.0", path = "lang", default-features = false }
+
+# OpenBrush dependency
+openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", branch = "develop", default-features = false, features = ["psp34"] }
+
+[lib]
+name = "allfeat_contracts"
+path = "src/lib.rs"
+crate-type = [
+    "rlib",
+]
+
+[features]
+default = ["std"]
+std = [
+    "ink/std",
+    "scale/std",
+    "scale-info/std",
+    # OpenBrush dependency
+    "openbrush/std",
+]
+aft34 = [
+    "openbrush/psp34"
+]
+ink-as-dependency = []
