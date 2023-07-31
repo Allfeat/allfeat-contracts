@@ -23,7 +23,20 @@
 
 use proc_macro::TokenStream;
 
-use allfeat_contracts_lang_codegen::implementation;
+use allfeat_contracts_lang_codegen::{contract, implementation};
+
+/// Entry point for use Allfeat's macros in ink! smart contracts.
+///
+/// # Description
+///
+/// The macro consumes Allfeat's macros to simplify the usage of the library.
+/// After consumption, it pastes ink! code and then ink!'s macros will be processed.
+///
+/// This macro consumes impl section for traits defined with [`#[openbrush::trait_definition]`](`macro@crate::trait_definition`).
+#[proc_macro_attribute]
+pub fn contract(_attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
+    contract::generate(_attrs.into(), ink_module.into()).into()
+}
 
 /// This macro implements the default traits defined in Allfeat, while also allowing users
 /// to override them with `#[overrider]` or `#[default_impl]` attributes. `#[overrider]` is used when

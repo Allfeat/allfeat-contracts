@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 #[allfeat_contracts::implementation(AFT34, AFT34Burnable, AFT34Mintable, AFT34Enumerable)]
-#[openbrush::contract]
+#[allfeat_contracts::contract]
 pub mod my_aft34_enumerable {
     use openbrush::traits::Storage;
 

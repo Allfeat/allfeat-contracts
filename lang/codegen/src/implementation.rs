@@ -38,7 +38,7 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
         .iter()
         .map(|arg| match arg {
             NestedMeta::Path(method) => method.to_token_stream().to_string().replace(' ', ""),
-            _ => panic!("Expected names of OpenBrush traits to implement in the contract!"),
+            _ => panic!("Expected names of Allfeat traits to implement in the contract!"),
         })
         .collect::<Vec<String>>();
 
@@ -48,7 +48,7 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
         None => {
             panic!(
                 "{}",
-                "out-of-line openbrush modules are not supported, use `#[implementation] mod name {{ ... }}`",
+                "out-of-line allfeat modules are not supported, use `#[implementation] mod name {{ ... }}`",
             )
         }
     };

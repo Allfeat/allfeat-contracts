@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 #[allfeat_contracts::implementation(AFT34)]
-#[openbrush::contract]
+#[allfeat_contracts::contract]
 pub mod my_aft34 {
     use openbrush::traits::Storage;
 

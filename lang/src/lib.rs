@@ -21,4 +21,4 @@
 
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-pub use allfeat_contracts_lang_macro::implementation;
+pub use allfeat_contracts_lang_macro::{contract, implementation};
