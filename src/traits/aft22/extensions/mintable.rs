@@ -19,8 +19,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod aft22;
-mod aft34;
+/// Extension of [`AFT22`] that allows create `amount` tokens
+/// and assigns them to `account`, increasing the total supply
+pub use crate::traits::errors::AFT22Error;
+use openbrush::traits::{AccountId, Balance};
 
-pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
-pub use aft34::{AFT34Error, AFT34ReceiverError};
+#[openbrush::wrapper]
+pub type AFT22MintableRef = dyn AFT22Mintable;
+
+#[openbrush::trait_definition]
+pub trait AFT22Mintable {
+    /// Minting `amount` tokens to the account.
+    ///
+    /// See [`AFT22::_mint_to`].
+    #[ink(message)]
+    fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error>;
+}

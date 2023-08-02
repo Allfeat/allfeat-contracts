@@ -19,8 +19,27 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod aft22;
-mod aft34;
+pub use crate::traits::errors::AFT22TokenTimelockError;
+use openbrush::traits::{AccountId, Timestamp};
 
-pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
-pub use aft34::{AFT34Error, AFT34ReceiverError};
+#[openbrush::wrapper]
+pub type AFT22TokenTimelockRef = dyn AFT22TokenTimelock;
+
+#[openbrush::trait_definition]
+pub trait AFT22TokenTimelock {
+    /// Returns the token address
+    #[ink(message)]
+    fn token(&self) -> Option<AccountId>;
+
+    /// Returns the beneficiary of the tokens
+    #[ink(message)]
+    fn beneficiary(&self) -> Option<AccountId>;
+
+    /// Returns the timestamp when the tokens are released
+    #[ink(message)]
+    fn release_time(&self) -> Timestamp;
+
+    /// Transfers the tokens held by timelock to the beneficairy
+    #[ink(message)]
+    fn release(&mut self) -> Result<(), AFT22TokenTimelockError>;
+}

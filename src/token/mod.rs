@@ -19,5 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#[cfg(feature = "aft22")]
+pub mod aft22;
 #[cfg(feature = "aft34")]
 pub mod aft34;

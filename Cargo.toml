@@ -44,7 +44,7 @@ std = [
     # OpenBrush dependency
     "openbrush/std",
 ]
-aft34 = [
-    "openbrush/psp34"
-]
+aft22 = []
+aft34 = []
+
 ink-as-dependency = []

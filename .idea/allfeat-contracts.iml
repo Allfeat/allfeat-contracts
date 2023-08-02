@@ -8,19 +8,29 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/aft34/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/aft22/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/aft22_extensions/burnable/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/aft22_extensions/capped/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/aft22_extensions/flashmint/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/aft34_extensions/burnable/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/aft34_extensions/enumerable/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/aft34_extensions/metadata/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/aft34_extensions/mintable/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/aft22_extensions/wrapper/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/lang/codegen/target" />
       <excludeFolder url="file://$MODULE_DIR$/lang/macros/target" />
       <excludeFolder url="file://$MODULE_DIR$/lang/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/examples/aft34/target" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/aft22/target" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/aft22_extensions/burnable/target" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/aft22_extensions/capped/target" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/aft22_extensions/flashmint/target" />
       <excludeFolder url="file://$MODULE_DIR$/examples/aft34_extensions/burnable/target" />
       <excludeFolder url="file://$MODULE_DIR$/examples/aft34_extensions/enumerable/target" />
       <excludeFolder url="file://$MODULE_DIR$/examples/aft34_extensions/metadata/target" />
       <excludeFolder url="file://$MODULE_DIR$/examples/aft34_extensions/mintable/target" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/aft22_extensions/wrapper/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

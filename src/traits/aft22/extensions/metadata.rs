@@ -19,8 +19,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod aft22;
-mod aft34;
+use openbrush::traits::String;
 
-pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
-pub use aft34::{AFT34Error, AFT34ReceiverError};
+#[openbrush::wrapper]
+pub type AFT22MetadataRef = dyn AFT22Metadata;
+
+/// Trait that contains metadata
+#[openbrush::trait_definition]
+pub trait AFT22Metadata {
+    /// Returns the token name.
+    #[ink(message)]
+    fn token_name(&self) -> Option<String>;
+
+    /// Returns the token symbol.
+    #[ink(message)]
+    fn token_symbol(&self) -> Option<String>;
+
+    /// Returns the token decimals.
+    #[ink(message)]
+    fn token_decimals(&self) -> u8;
+}

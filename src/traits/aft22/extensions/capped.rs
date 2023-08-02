@@ -19,8 +19,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod aft22;
-mod aft34;
+/// Extension of [`AFT22`] that allows to set a limit on the total funding
+use openbrush::traits::Balance;
 
-pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
-pub use aft34::{AFT34Error, AFT34ReceiverError};
+#[openbrush::wrapper]
+pub type AFT22CappedRef = dyn AFT22Capped;
+
+#[openbrush::trait_definition]
+pub trait AFT22Capped {
+    /// Returns the token's cap
+    #[ink(message)]
+    fn cap(&self) -> Balance;
+}

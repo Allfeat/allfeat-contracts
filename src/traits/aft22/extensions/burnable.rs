@@ -19,8 +19,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod aft22;
-mod aft34;
+/// Extension of [`AFT22`] that allows token holders to destroy both their own
+/// tokens and those that they have an allowance for.
+pub use crate::traits::errors::AFT22Error;
+use openbrush::traits::{AccountId, Balance};
 
-pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
-pub use aft34::{AFT34Error, AFT34ReceiverError};
+#[openbrush::wrapper]
+pub type AFT22BurnableRef = dyn AFT22Burnable;
+
+#[openbrush::trait_definition]
+pub trait AFT22Burnable {
+    /// Destroys `amount` tokens from `account`, deducting from the caller's
+    /// allowance.
+    ///
+    /// See [AFTP22::_burn_from`].
+    #[ink(message)]
+    fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error>;
+}
