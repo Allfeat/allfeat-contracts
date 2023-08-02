@@ -28,5 +28,7 @@ mod token;
 pub mod traits;
 
 // Modules with implementation of traits above
+#[cfg(feature = "aft22")]
+pub use token::aft22;
 #[cfg(feature = "aft34")]
 pub use token::aft34;

@@ -19,8 +19,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod aft22;
-mod aft34;
+pub use crate::{
+    aft22,
+    traits::aft22::{extensions::burnable::*, *},
+};
+pub use aft22::{AFT22Impl, Internal as _, InternalImpl as _};
+use openbrush::traits::{AccountId, Balance};
 
-pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
-pub use aft34::{AFT34Error, AFT34ReceiverError};
+pub trait AFT22BurnableImpl: aft22::Internal {
+    fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+        self._burn_from(account, amount)
+    }
+}

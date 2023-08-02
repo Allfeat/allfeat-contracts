@@ -66,6 +66,538 @@ impl<'a> ImplArgs<'a> {
     }
 }
 
+pub(crate) fn impl_aft22(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft22::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft22::Internal for #storage_struct_name {
+            fn _emit_transfer_event(&self, from: Option<AccountId>, to: Option<AccountId>, amount: Balance) {
+                aft22::InternalImpl::_emit_transfer_event(self, from, to, amount)
+            }
+
+            fn _emit_approval_event(&self, owner: AccountId, spender: AccountId, amount: Balance) {
+                aft22::InternalImpl::_emit_approval_event(self, owner, spender, amount)
+            }
+
+            fn _total_supply(&self) -> Balance {
+                aft22::InternalImpl::_total_supply(self)
+            }
+
+            fn _balance_of(&self, owner: &AccountId) -> Balance {
+                aft22::InternalImpl::_balance_of(self, owner)
+            }
+
+            fn _allowance(&self, owner: &AccountId, spender: &AccountId) -> Balance {
+                aft22::InternalImpl::_allowance(self, owner, spender)
+            }
+
+            fn _transfer_from_to(
+                &mut self,
+                from: AccountId,
+                to: AccountId,
+                amount: Balance,
+                data: Vec<u8>,
+            ) -> Result<(), AFT22Error> {
+                aft22::InternalImpl::_transfer_from_to(self, from, to, amount, data)
+            }
+
+            fn _approve_from_to(
+                &mut self,
+                owner: AccountId,
+                spender: AccountId,
+                amount: Balance,
+            ) -> Result<(), AFT22Error> {
+                aft22::InternalImpl::_approve_from_to(self, owner, spender, amount)
+            }
+
+            fn _mint_to(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+                aft22::InternalImpl::_mint_to(self, account, amount)
+            }
+
+            fn _burn_from(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+                aft22::InternalImpl::_burn_from(self, account, amount)
+            }
+
+            fn _before_token_transfer(
+                &mut self,
+                from: Option<&AccountId>,
+                to: Option<&AccountId>,
+                amount: &Balance,
+            ) -> Result<(), AFT22Error> {
+                aft22::InternalImpl::_before_token_transfer(self, from, to, amount)
+            }
+
+            fn _after_token_transfer(
+                &mut self,
+                from: Option<&AccountId>,
+                to: Option<&AccountId>,
+                amount: &Balance,
+            ) -> Result<(), AFT22Error> {
+                aft22::InternalImpl::_after_token_transfer(self, from, to, amount)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let aft22_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22Impl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut aft22 = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22 for #storage_struct_name {
+            #[ink(message)]
+            fn total_supply(&self) -> Balance {
+                AFT22Impl::total_supply(self)
+            }
+
+            #[ink(message)]
+            fn balance_of(&self, owner: AccountId) -> Balance {
+                AFT22Impl::balance_of(self, owner)
+            }
+
+            #[ink(message)]
+            fn allowance(&self, owner: AccountId, spender: AccountId) -> Balance {
+                AFT22Impl::allowance(self, owner, spender)
+            }
+
+            #[ink(message)]
+            fn transfer(&mut self, to: AccountId, value: Balance, data: Vec<u8>) -> Result<(), AFT22Error> {
+                AFT22Impl::transfer(self, to, value, data)
+            }
+
+            #[ink(message)]
+            fn transfer_from(
+                &mut self,
+                from: AccountId,
+                to: AccountId,
+                value: Balance,
+                data: Vec<u8>,
+            ) -> Result<(), AFT22Error> {
+                AFT22Impl::transfer_from(self, from, to, value, data)
+            }
+
+            #[ink(message)]
+            fn approve(&mut self, spender: AccountId, value: Balance) -> Result<(), AFT22Error> {
+                AFT22Impl::approve(self, spender, value)
+            }
+
+            #[ink(message)]
+            fn increase_allowance(&mut self, spender: AccountId, delta_value: Balance) -> Result<(), AFT22Error> {
+                AFT22Impl::increase_allowance(self, spender, delta_value)
+            }
+
+            #[ink(message)]
+            fn decrease_allowance(&mut self, spender: AccountId, delta_value: Balance) -> Result<(), AFT22Error> {
+                AFT22Impl::decrease_allowance(self, spender, delta_value)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT22", import);
+    impl_args.vec_import();
+
+    override_functions("aft22::Internal", &mut internal, impl_args.map);
+    override_functions("AFT22", &mut aft22, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(aft22_impl));
+    impl_args.items.push(syn::Item::Impl(aft22));
+}
+
+pub(crate) fn impl_aft22_mintable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let mintable_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22MintableImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut mintable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22Mintable for #storage_struct_name {
+            #[ink(message)]
+            fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+                AFT22MintableImpl::mint(self, account, amount)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::extensions::mintable::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT22Mintable", import);
+    impl_args.vec_import();
+
+    override_functions("AFT22Mintable", &mut mintable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(mintable_impl));
+    impl_args.items.push(syn::Item::Impl(mintable));
+}
+
+pub(crate) fn impl_aft22_burnable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let burnable_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22BurnableImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut burnable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22Burnable for #storage_struct_name {
+            #[ink(message)]
+            fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+                AFT22BurnableImpl::burn(self, account, amount)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::extensions::burnable::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT22Burnable", import);
+    impl_args.vec_import();
+
+    override_functions("AFT22Burnable", &mut burnable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(burnable_impl));
+    impl_args.items.push(syn::Item::Impl(burnable));
+}
+
+pub(crate) fn impl_aft22_metadata(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let metadata_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22MetadataImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut metadata = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22Metadata for #storage_struct_name {
+            #[ink(message)]
+            fn token_name(&self) -> Option<String> {
+                AFT22MetadataImpl::token_name(self)
+            }
+
+            #[ink(message)]
+            fn token_symbol(&self) -> Option<String> {
+                AFT22MetadataImpl::token_symbol(self)
+            }
+
+            #[ink(message)]
+            fn token_decimals(&self) -> u8 {
+                AFT22MetadataImpl::token_decimals(self)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::extensions::metadata::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT22Metadata", import);
+    impl_args.vec_import();
+
+    override_functions("AFT22Metadata", &mut metadata, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(metadata_impl));
+    impl_args.items.push(syn::Item::Impl(metadata));
+}
+
+pub(crate) fn impl_aft22_capped(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl capped::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl capped::Internal for #storage_struct_name {
+            fn _init_cap(&mut self, cap: Balance) -> Result<(), AFT22Error> {
+                capped::InternalImpl::_init_cap(self, cap)
+            }
+
+            fn _is_cap_exceeded(&self, amount: &Balance) -> bool {
+                capped::InternalImpl::_is_cap_exceeded(self, amount)
+            }
+
+            fn _cap(&self) -> Balance {
+                capped::InternalImpl::_cap(self)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let capped_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22CappedImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut capped = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22Capped for #storage_struct_name {
+            #[ink(message)]
+            fn cap(&self) -> Balance {
+                AFT22CappedImpl::cap(self)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::extensions::capped::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT22Capped", import);
+    impl_args.vec_import();
+
+    override_functions("capped::Internal", &mut internal, impl_args.map);
+    override_functions("AFT22Capped", &mut capped, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(capped_impl));
+    impl_args.items.push(syn::Item::Impl(capped));
+}
+
+pub(crate) fn impl_aft22_wrapper(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl wrapper::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl wrapper::Internal for #storage_struct_name {
+            fn _recover(&mut self, account: AccountId) -> Result<Balance, AFT22Error> {
+                wrapper::InternalImpl::_recover(self, account)
+            }
+
+            fn _deposit(&mut self, amount: Balance) -> Result<(), AFT22Error> {
+                wrapper::InternalImpl::_deposit(self, amount)
+            }
+
+            fn _withdraw(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+                wrapper::InternalImpl::_withdraw(self, account, amount)
+            }
+
+            fn _underlying_balance(&mut self) -> Balance {
+                wrapper::InternalImpl::_underlying_balance(self)
+            }
+
+            fn _init(&mut self, underlying: AccountId) {
+                wrapper::InternalImpl::_init(self, underlying)
+            }
+
+            fn _underlying(&mut self) -> Option<AccountId> {
+                wrapper::InternalImpl::_underlying(self)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let wrapper_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22WrapperImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut wrapper = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22Wrapper for #storage_struct_name {
+            #[ink(message)]
+            fn deposit_for(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+                AFT22WrapperImpl::deposit_for(self, account, amount)
+            }
+
+            #[ink(message)]
+            fn withdraw_to(&mut self, account: AccountId, amount: Balance) -> Result<(), AFT22Error> {
+                AFT22WrapperImpl::withdraw_to(self, account, amount)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::extensions::wrapper::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT22Wrapper", import);
+    impl_args.vec_import();
+
+    override_functions("wrapper::Internal", &mut internal, impl_args.map);
+    override_functions("AFT22Wrapper", &mut wrapper, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(wrapper_impl));
+    impl_args.items.push(syn::Item::Impl(wrapper));
+}
+
+pub(crate) fn impl_flashmint(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl flashmint::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl flashmint::Internal for #storage_struct_name {
+            fn _get_fee(&self, amount: Balance) -> Balance {
+                flashmint::InternalImpl::_get_fee(self, amount)
+            }
+
+            fn _on_flashloan(
+                &mut self,
+                receiver_account: AccountId,
+                token: AccountId,
+                fee: Balance,
+                amount: Balance,
+                data: Vec<u8>,
+            ) -> Result<(), FlashLenderError> {
+                flashmint::InternalImpl::_on_flashloan(self, receiver_account, token, fee, amount, data)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let flashlender_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl FlashLenderImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut flashlender = syn::parse2::<syn::ItemImpl>(quote!(
+        impl FlashLender for #storage_struct_name {
+            #[ink(message)]
+            fn max_flashloan(&mut self, token: AccountId) -> Balance {
+                FlashLenderImpl::max_flashloan(self, token)
+            }
+
+            #[ink(message)]
+            fn flash_fee(&self, token: AccountId, amount: Balance) -> Result<Balance, FlashLenderError> {
+                FlashLenderImpl::flash_fee(self, token, amount)
+            }
+
+            #[ink(message)]
+            fn flashloan(
+                &mut self,
+                receiver_account: AccountId,
+                token: AccountId,
+                amount: Balance,
+                data: Vec<u8>,
+            ) -> Result<(), FlashLenderError> {
+                FlashLenderImpl::flashloan(self, receiver_account, token, amount, data)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::extensions::flashmint::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("Flashmint", import);
+    impl_args.vec_import();
+
+    override_functions("flashmint::Internal", &mut internal, impl_args.map);
+    override_functions("FlashLender", &mut flashlender, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(flashlender_impl));
+    impl_args.items.push(syn::Item::Impl(flashlender));
+}
+
+pub(crate) fn impl_token_timelock(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl token_timelock::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl token_timelock::Internal for #storage_struct_name {
+            fn _withdraw(&mut self, amount: Balance) -> Result<(), AFT22TokenTimelockError> {
+                token_timelock::InternalImpl::_withdraw(self, amount)
+            }
+
+            fn _contract_balance(&mut self) -> Balance {
+                token_timelock::InternalImpl::_contract_balance(self)
+            }
+
+            fn _init(
+                &mut self,
+                token: AccountId,
+                beneficiary: AccountId,
+                release_time: Timestamp,
+            ) -> Result<(), AFT22TokenTimelockError> {
+                token_timelock::InternalImpl::_init(self, token, beneficiary, release_time)
+            }
+
+            fn _token(&self) -> Option<AccountId> {
+                token_timelock::InternalImpl::_token(self)
+            }
+
+            fn _beneficiary(&self) -> Option<AccountId> {
+                token_timelock::InternalImpl::_beneficiary(self)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let timelock_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22TokenTimelockImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut timelock = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT22TokenTimelock for #storage_struct_name {
+            #[ink(message)]
+            fn token(&self) -> Option<AccountId> {
+                AFT22TokenTimelockImpl::token(self)
+            }
+
+            #[ink(message)]
+            fn beneficiary(&self) -> Option<AccountId> {
+                AFT22TokenTimelockImpl::beneficiary(self)
+            }
+
+            #[ink(message)]
+            fn release_time(&self) -> Timestamp {
+                AFT22TokenTimelockImpl::release_time(self)
+            }
+
+            #[ink(message)]
+            fn release(&mut self) -> Result<(), AFT22TokenTimelockError> {
+                AFT22TokenTimelockImpl::release(self)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft22::utils::token_timelock::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT22TokenTimelock", import);
+
+    override_functions("token_timelock::Internal", &mut internal, impl_args.map);
+    override_functions("AFT22TokenTimelock", &mut timelock, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(timelock_impl));
+    impl_args.items.push(syn::Item::Impl(timelock));
+}
+
 pub(crate) fn impl_aft34(impl_args: &mut ImplArgs) {
     let storage_struct_name = impl_args.contract_name();
     let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(

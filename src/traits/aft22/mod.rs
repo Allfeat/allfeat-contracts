@@ -19,8 +19,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#[allow(clippy::module_inception)]
 mod aft22;
-mod aft34;
 
-pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
-pub use aft34::{AFT34Error, AFT34ReceiverError};
+pub use aft22::*;
+
+pub mod extensions {
+    pub mod burnable;
+    pub mod capped;
+    pub mod metadata;
+    pub mod mintable;
+    pub mod wrapper;
+}
+
+pub mod utils {
+    pub mod token_timelock;
+}

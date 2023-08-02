@@ -67,6 +67,14 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
 
     for to_implement in args {
         match to_implement.as_str() {
+            "AFT22" => impl_aft22(&mut impl_args),
+            "AFT22Mintable" => impl_aft22_mintable(&mut impl_args),
+            "AFT22Burnable" => impl_aft22_burnable(&mut impl_args),
+            "AFT22Metadata" => impl_aft22_metadata(&mut impl_args),
+            "AFT22Capped" => impl_aft22_capped(&mut impl_args),
+            "AFT22Wrapper" => impl_aft22_wrapper(&mut impl_args),
+            "Flashmint" => impl_flashmint(&mut impl_args),
+            "AFT22TokenTimelock" => impl_token_timelock(&mut impl_args),
             "AFT34" => impl_aft34(&mut impl_args),
             "AFT34Burnable" => impl_aft34_burnable(&mut impl_args),
             "AFT34Metadata" => impl_aft34_metadata(&mut impl_args),
@@ -102,22 +110,15 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
 
 fn cleanup_imports(imports: &mut HashMap<&str, syn::ItemUse>) {
     // we will remove unnecessary imports
-    let psp22_impls = vec![
-        "PSP22Mintable",
-        "PSP22Burnable",
-        "PSP22Capped",
-        "PSP22Metadata",
-        "PSP22Wrapper",
+    let aft22_impls = vec![
+        "AFT22Mintable",
+        "AFT22Burnable",
+        "AFT22Capped",
+        "AFT22Metadata",
+        "AFT22Wrapper",
         "Flashmint",
     ];
-    check_and_remove_import("PSP22", psp22_impls, imports);
-
-    let psp22_pallet_impls = vec![
-        "PSP22PalletMintable",
-        "PSP22PalletBurnable",
-        "PSP22PalletMetadata",
-    ];
-    check_and_remove_import("PSP22Pallet", psp22_pallet_impls, imports);
+    check_and_remove_import("AFT22", aft22_impls, imports);
 
     let aft34_impls = vec![
         "AFT34Mintable",
