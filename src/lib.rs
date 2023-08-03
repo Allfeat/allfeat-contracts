@@ -32,3 +32,5 @@ pub mod traits;
 pub use token::aft22;
 #[cfg(feature = "aft34")]
 pub use token::aft34;
+#[cfg(feature = "aft37")]
+pub use token::aft37;

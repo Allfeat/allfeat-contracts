@@ -23,3 +23,5 @@
 pub mod aft22;
 #[cfg(feature = "aft34")]
 pub mod aft34;
+#[cfg(feature = "aft37")]
+pub mod aft37;

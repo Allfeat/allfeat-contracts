@@ -80,6 +80,12 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
             "AFT34Metadata" => impl_aft34_metadata(&mut impl_args),
             "AFT34Enumerable" => impl_aft34_enumerable(&mut impl_args),
             "AFT34Mintable" => impl_aft34_mintable(&mut impl_args),
+            "AFT37" => impl_aft37(&mut impl_args),
+            "AFT37Batch" => impl_aft37_batch(&mut impl_args),
+            "AFT37Burnable" => impl_aft37_burnable(&mut impl_args),
+            "AFT37Metadata" => impl_aft37_metadata(&mut impl_args),
+            "AFT37Mintable" => impl_aft37_mintable(&mut impl_args),
+            "AFT37Enumerable" => impl_aft37_enumerable(&mut impl_args),
             _ => panic!("allfeat_contracts::implementation({to_implement}) not implemented!"),
         }
     }
@@ -128,14 +134,14 @@ fn cleanup_imports(imports: &mut HashMap<&str, syn::ItemUse>) {
     ];
     check_and_remove_import("AFT34", aft34_impls, imports);
 
-    let psp37_impls = vec![
-        "PSP37Batch",
-        "PSP37Burnable",
-        "PSP37Metadata",
-        "PSP37Mintable",
-        "PSP37Enumerable",
+    let aft37_impls = vec![
+        "AFT37Batch",
+        "AFT37Burnable",
+        "AFT37Metadata",
+        "AFT37Mintable",
+        "AFT37Enumerable",
     ];
-    check_and_remove_import("PSP37", psp37_impls, imports);
+    check_and_remove_import("AFT37", aft37_impls, imports);
 
     let access_impls = vec!["AccessControlEnumerable", "TimelockController"];
     check_and_remove_import("AccessControl", access_impls, imports);

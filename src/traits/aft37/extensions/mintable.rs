@@ -19,9 +19,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-pub mod aft22;
-pub mod aft34;
-pub mod aft37;
-pub mod errors;
+/// Extension of [`AFT37`] that allows minting of new tokens
+use crate::traits::aft37::{AFT37Error, Id};
+use ink::prelude::vec::Vec;
+use openbrush::traits::{AccountId, Balance};
 
-mod types;
+#[openbrush::wrapper]
+pub type AFT37MintableRef = dyn AFT37Mintable;
+
+#[openbrush::trait_definition]
+pub trait AFT37Mintable {
+    /// Mints `amount` tokens of token type `id` to `to`
+    ///
+    /// See [`AFT37::_mint_to`].
+    #[ink(message)]
+    fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error>;
+}

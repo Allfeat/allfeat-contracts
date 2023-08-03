@@ -19,9 +19,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-pub mod aft22;
-pub mod aft34;
-pub mod aft37;
-pub mod errors;
+/// Extension of [`AFT37`] that allows to transfer a batch of tokens
+use crate::traits::aft37::{AFT37Error, Id};
+use ink::prelude::vec::Vec;
+use openbrush::traits::{AccountId, Balance};
 
-mod types;
+#[openbrush::wrapper]
+pub type AFT37BatchRef = dyn AFT37Batch;
+
+#[openbrush::trait_definition]
+pub trait AFT37Batch {
+    #[ink(message)]
+    fn batch_transfer(
+        &mut self,
+        to: AccountId,
+        ids_amounts: Vec<(Id, Balance)>,
+        data: Vec<u8>,
+    ) -> Result<(), AFT37Error>;
+
+    #[ink(message)]
+    fn batch_transfer_from(
+        &mut self,
+        from: AccountId,
+        to: AccountId,
+        ids_amounts: Vec<(Id, Balance)>,
+        data: Vec<u8>,
+    ) -> Result<(), AFT37Error>;
+}

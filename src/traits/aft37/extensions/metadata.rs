@@ -19,9 +19,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-pub mod aft22;
-pub mod aft34;
-pub mod aft37;
-pub mod errors;
+/// Metadata for AFT37
+pub use crate::traits::aft37::Id;
+use openbrush::traits::String;
 
-mod types;
+#[openbrush::wrapper]
+pub type AFT37MetadataRef = dyn AFT37Metadata;
+
+#[openbrush::trait_definition]
+pub trait AFT37Metadata {
+    #[ink(message)]
+    fn get_attribute(&self, id: Id, key: String) -> Option<String>;
+}

@@ -19,9 +19,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-pub mod aft22;
-pub mod aft34;
-pub mod aft37;
-pub mod errors;
+pub use crate::{
+    aft37,
+    traits::aft37::{extensions::mintable::*, *},
+};
+pub use aft37::{
+    AFT37Impl, BalancesManager as _, BalancesManagerImpl as _, Internal as _, InternalImpl as _,
+};
+use ink::prelude::vec::Vec;
+use openbrush::traits::{AccountId, Balance};
 
-mod types;
+pub trait AFT37MintableImpl: aft37::Internal {
+    fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
+        self._mint_to(to, ids_amounts)
+    }
+}

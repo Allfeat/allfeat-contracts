@@ -1010,3 +1010,513 @@ pub(crate) fn impl_aft34_enumerable(impl_args: &mut ImplArgs) {
     impl_args.items.push(syn::Item::Impl(enumerable_impl));
     impl_args.items.push(syn::Item::Impl(aft34_enumerable));
 }
+
+pub(crate) fn impl_aft37(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft37::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft37::Internal for #storage_struct_name {
+            fn _emit_transfer_event(&self, from: Option<AccountId>, to: Option<AccountId>, id: Id, amount: Balance) {
+                aft37::InternalImpl::_emit_transfer_event(self, from, to, id, amount)
+            }
+
+            fn _emit_transfer_batch_event(
+                &self,
+                from: Option<AccountId>,
+                to: Option<AccountId>,
+                ids_amounts: Vec<(Id, Balance)>,
+            ) {
+                aft37::InternalImpl::_emit_transfer_batch_event(self, from, to, ids_amounts)
+            }
+
+            fn _emit_approval_event(&self, owner: AccountId, operator: AccountId, id: Option<Id>, value: Balance) {
+                aft37::InternalImpl::_emit_approval_event(self, owner, operator, id, value)
+            }
+
+            fn _mint_to(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_mint_to(self, to, ids_amounts)
+            }
+
+            fn _burn_from(&mut self, from: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_burn_from(self, from, ids_amounts)
+            }
+
+            fn _transfer_from(
+                &mut self,
+                from: AccountId,
+                to: AccountId,
+                id: Id,
+                amount: Balance,
+                data: Vec<u8>,
+            ) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_transfer_from(self, from, to, id, amount, data)
+            }
+
+            fn _get_allowance(&self, account: &AccountId, operator: &AccountId, id: &Option<&Id>) -> Balance {
+                aft37::InternalImpl::_get_allowance(self, account, operator, id)
+            }
+
+            fn _approve_for(&mut self, operator: AccountId, id: Option<Id>, value: Balance) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_approve_for(self, operator, id, value)
+            }
+
+            fn _decrease_allowance(
+                &mut self,
+                owner: &AccountId,
+                operator: &AccountId,
+                id: &Id,
+                value: Balance,
+            ) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_decrease_allowance(self, owner, operator, id, value)
+            }
+
+            fn _transfer_token(
+                &mut self,
+                from: &AccountId,
+                to: &AccountId,
+                id: Id,
+                amount: Balance,
+                data: &[u8],
+            ) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_transfer_token(self, from, to, id, amount, data)
+            }
+
+            fn _before_token_transfer(
+                &mut self,
+                from: Option<&AccountId>,
+                to: Option<&AccountId>,
+                ids: &[(Id, Balance)],
+            ) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_before_token_transfer(self, from, to, ids)
+            }
+
+            fn _after_token_transfer(
+                &mut self,
+                from: Option<&AccountId>,
+                to: Option<&AccountId>,
+                ids: &[(Id, Balance)],
+            ) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_after_token_transfer(self, from, to, ids)
+            }
+        }
+
+    ))
+        .expect("Should parse");
+
+    let aft37_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37Impl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut aft37 = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37 for #storage_struct_name {
+            #[ink(message)]
+            fn balance_of(&self, owner: AccountId, id: Option<Id>) -> Balance {
+                AFT37Impl::balance_of(self, owner, id)
+            }
+
+            #[ink(message)]
+            fn total_supply(&self, id: Option<Id>) -> Balance {
+                AFT37Impl::total_supply(self, id)
+            }
+
+            #[ink(message)]
+            fn allowance(&self, owner: AccountId, operator: AccountId, id: Option<Id>) -> Balance {
+                AFT37Impl::allowance(self, owner, operator, id)
+            }
+
+            #[ink(message)]
+            fn approve(&mut self, operator: AccountId, id: Option<Id>, value: Balance) -> Result<(), AFT37Error> {
+                AFT37Impl::approve(self, operator, id, value)
+            }
+
+            #[ink(message)]
+            fn transfer(&mut self, to: AccountId, id: Id, value: Balance, data: Vec<u8>) -> Result<(), AFT37Error> {
+                AFT37Impl::transfer(self, to, id, value, data)
+            }
+
+            #[ink(message)]
+            fn transfer_from(
+                &mut self,
+                from: AccountId,
+                to: AccountId,
+                id: Id,
+                value: Balance,
+                data: Vec<u8>,
+            ) -> Result<(), AFT37Error> {
+                AFT37Impl::transfer_from(self, from, to, id, value, data)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let aft37_balances_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft37::BalancesManagerImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut aft37_balances = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft37::BalancesManager for #storage_struct_name {
+            fn _balance_of(&self, owner: &AccountId, id: &Option<&Id>) -> Balance {
+                aft37::BalancesManagerImpl::_balance_of(self, owner, id)
+            }
+
+            fn _total_supply(&self, id: &Option<&Id>) -> Balance {
+                aft37::BalancesManagerImpl::_total_supply(self, id)
+            }
+
+            fn _increase_balance(
+                &mut self,
+                owner: &AccountId,
+                id: &Id,
+                amount: &Balance,
+                mint: bool,
+            ) -> Result<(), AFT37Error> {
+                aft37::BalancesManagerImpl::_increase_balance(self, owner, id, amount, mint)
+            }
+
+            fn _decrease_balance(
+                &mut self,
+                owner: &AccountId,
+                id: &Id,
+                amount: &Balance,
+                burn: bool,
+            ) -> Result<(), AFT37Error> {
+                aft37::BalancesManagerImpl::_decrease_balance(self, owner, id, amount, burn)
+            }
+
+            fn _insert_operator_approvals(
+                &mut self,
+                owner: &AccountId,
+                operator: &AccountId,
+                id: &Option<&Id>,
+                amount: &Balance,
+            ) {
+                aft37::BalancesManagerImpl::_insert_operator_approvals(self, owner, operator, id, amount)
+            }
+
+            fn _get_operator_approvals(&self, owner: &AccountId, operator: &AccountId, id: &Option<&Id>) -> Option<Balance> {
+                aft37::BalancesManagerImpl::_get_operator_approvals(self, owner, operator, id)
+            }
+            fn _remove_operator_approvals(&self, owner: &AccountId, operator: &AccountId, id: &Option<&Id>) {
+                aft37::BalancesManagerImpl::_remove_operator_approvals(self, owner, operator, id)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37", import);
+    impl_args.vec_import();
+
+    override_functions("aft37::BalancesManager", &mut aft37_balances, impl_args.map);
+    override_functions("aft37::Internal", &mut internal, impl_args.map);
+    override_functions("AFT37", &mut aft37, impl_args.map);
+
+    // only insert this if it is not present
+    impl_args
+        .overriden_traits
+        .entry("aft37::BalancesManager")
+        .or_insert(syn::Item::Impl(aft37_balances));
+
+    impl_args
+        .overriden_traits
+        .entry("aft37::BalancesManagerImpl")
+        .or_insert(syn::Item::Impl(aft37_balances_impl));
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(aft37_impl));
+    impl_args.items.push(syn::Item::Impl(aft37));
+}
+
+pub(crate) fn impl_aft37_batch(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl batch::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl batch::Internal for #storage_struct_name {
+            fn _batch_transfer_from(
+                &mut self,
+                from: AccountId,
+                to: AccountId,
+                ids_amounts: Vec<(Id, Balance)>,
+                data: Vec<u8>,
+            ) -> Result<(), AFT37Error> {
+                batch::InternalImpl::_batch_transfer_from(self, from, to, ids_amounts, data)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let batch_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37BatchImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut batch = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37Batch for #storage_struct_name {
+            #[ink(message)]
+            fn batch_transfer(
+                &mut self,
+                to: AccountId,
+                ids_amounts: Vec<(Id, Balance)>,
+                data: Vec<u8>,
+            ) -> Result<(), AFT37Error> {
+                AFT37BatchImpl::batch_transfer(self, to, ids_amounts, data)
+            }
+
+            #[ink(message)]
+            fn batch_transfer_from(
+                &mut self,
+                from: AccountId,
+                to: AccountId,
+                ids_amounts: Vec<(Id, Balance)>,
+                data: Vec<u8>,
+            ) -> Result<(), AFT37Error> {
+                AFT37BatchImpl::batch_transfer_from(self, from, to, ids_amounts, data)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::extensions::batch::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37Batch", import);
+    impl_args.vec_import();
+
+    override_functions("batch::Internal", &mut internal, impl_args.map);
+    override_functions("AFT37Batch", &mut batch, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(batch_impl));
+    impl_args.items.push(syn::Item::Impl(batch));
+}
+
+pub(crate) fn impl_aft37_burnable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let burnable_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37BurnableImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut burnable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37Burnable for #storage_struct_name {
+            #[ink(message)]
+            fn burn(&mut self, from: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
+                AFT37BurnableImpl::burn(self, from, ids_amounts)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::extensions::burnable::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37Burnable", import);
+    impl_args.vec_import();
+
+    override_functions("AFT37Burnable", &mut burnable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(burnable_impl));
+    impl_args.items.push(syn::Item::Impl(burnable));
+}
+
+pub(crate) fn impl_aft37_metadata(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl metadata::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl metadata::Internal for #storage_struct_name {
+            fn _emit_attribute_set_event(&self, id: &Id, key: &String, data: &String) {
+                metadata::InternalImpl::_emit_attribute_set_event(self, id, key, data);
+            }
+
+            fn _set_attribute(&mut self, id: &Id, key: &String, data: &String) -> Result<(), AFT37Error> {
+                metadata::InternalImpl::_set_attribute(self, id, key, data)
+            }
+
+            fn _get_attribute(&self, id: &Id, key: &String) -> Option<String> {
+                metadata::InternalImpl::_get_attribute(self, id, key)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let metadata_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37MetadataImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut metadata = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37Metadata for #storage_struct_name {
+            #[ink(message)]
+            fn get_attribute(&self, id: Id, key: String) -> Option<String> {
+                AFT37MetadataImpl::get_attribute(self, id, key)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::extensions::metadata::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37Metadata", import);
+    impl_args.vec_import();
+
+    override_functions("metadata::Internal", &mut internal, impl_args.map);
+    override_functions("AFT37Metadata", &mut metadata, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(metadata_impl));
+    impl_args.items.push(syn::Item::Impl(metadata));
+}
+
+pub(crate) fn impl_aft37_mintable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let mintable_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37MintableImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut mintable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37Mintable for #storage_struct_name {
+            #[ink(message)]
+            fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
+                AFT37MintableImpl::mint(self, to, ids_amounts)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::extensions::mintable::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37Mintable", import);
+    impl_args.vec_import();
+
+    override_functions("AFT37Mintable", &mut mintable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(mintable_impl));
+    impl_args.items.push(syn::Item::Impl(mintable));
+}
+
+pub(crate) fn impl_aft37_enumerable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let enumerable_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37EnumerableImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut aft37_enumerable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37Enumerable for #storage_struct_name {
+            #[ink(message)]
+            fn owners_token_by_index(&self, owner: AccountId, index: u128) -> Option<Id> {
+                AFT37EnumerableImpl::owners_token_by_index(self, owner, index)
+            }
+
+            #[ink(message)]
+            fn token_by_index(&self, index: u128) -> Option<Id> {
+                AFT37EnumerableImpl::token_by_index(self, index)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let aft37_balances_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl enumerable::BalancesManagerImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut aft37_balances = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft37::BalancesManager for #storage_struct_name {
+            fn _balance_of(&self, owner: &AccountId, id: &Option<&Id>) -> Balance {
+                enumerable::BalancesManagerImpl::_balance_of(self, owner, id)
+            }
+
+            fn _total_supply(&self, id: &Option<&Id>) -> Balance {
+                enumerable::BalancesManagerImpl::_total_supply(self, id)
+            }
+
+            fn _increase_balance(
+                &mut self,
+                owner: &AccountId,
+                id: &Id,
+                amount: &Balance,
+                mint: bool,
+            ) -> Result<(), AFT37Error> {
+                enumerable::BalancesManagerImpl::_increase_balance(self, owner, id, amount, mint)
+            }
+
+            fn _decrease_balance(
+                &mut self,
+                owner: &AccountId,
+                id: &Id,
+                amount: &Balance,
+                burn: bool,
+            ) -> Result<(), AFT37Error> {
+                enumerable::BalancesManagerImpl::_decrease_balance(self, owner, id, amount, burn)
+            }
+
+            fn _insert_operator_approvals(
+                &mut self,
+                owner: &AccountId,
+                operator: &AccountId,
+                id: &Option<&Id>,
+                amount: &Balance,
+            ) {
+                enumerable::BalancesManagerImpl::_insert_operator_approvals(self, owner, operator, id, amount)
+            }
+
+            fn _get_operator_approvals(&self, owner: &AccountId, operator: &AccountId, id: &Option<&Id>) -> Option<Balance> {
+                enumerable::BalancesManagerImpl::_get_operator_approvals(self, owner, operator, id)
+            }
+
+            fn _remove_operator_approvals(&self, owner: &AccountId, operator: &AccountId, id: &Option<&Id>){
+                enumerable::BalancesManagerImpl::_remove_operator_approvals(self, owner, operator, id)
+            }
+        }
+    ))
+        .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::extensions::enumerable::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37Enumerable", import);
+    impl_args.vec_import();
+
+    override_functions("aft37::BalancesManager", &mut aft37_balances, impl_args.map);
+    override_functions("AFT37Enumerable", &mut aft37_enumerable, impl_args.map);
+
+    impl_args
+        .overriden_traits
+        .insert("aft37::BalancesManager", syn::Item::Impl(aft37_balances));
+    impl_args.overriden_traits.insert(
+        "aft37::BalancesManagerImpl",
+        syn::Item::Impl(aft37_balances_impl),
+    );
+
+    impl_args.items.push(syn::Item::Impl(enumerable_impl));
+    impl_args.items.push(syn::Item::Impl(aft37_enumerable));
+}
