@@ -21,6 +21,8 @@
 
 mod aft22;
 mod aft34;
+mod aft37;
 
 pub use aft22::{AFT22Error, AFT22ReceiverError, AFT22TokenTimelockError};
 pub use aft34::{AFT34Error, AFT34ReceiverError};
+pub use aft37::{AFT37Error, AFT37ReceiverError};

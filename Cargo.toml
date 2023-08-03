@@ -46,5 +46,6 @@ std = [
 ]
 aft22 = []
 aft34 = []
+aft37 = []
 
 ink-as-dependency = []

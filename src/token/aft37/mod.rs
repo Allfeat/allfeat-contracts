@@ -19,9 +19,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-pub mod aft22;
-pub mod aft34;
 pub mod aft37;
-pub mod errors;
 
-mod types;
+pub use aft37::*;
+pub mod extensions {
+    pub mod batch;
+    pub mod burnable;
+    pub mod enumerable;
+    pub mod metadata;
+    pub mod mintable;
+}

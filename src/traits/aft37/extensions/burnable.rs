@@ -19,9 +19,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-pub mod aft22;
-pub mod aft34;
-pub mod aft37;
-pub mod errors;
+/// Extension of [`AFT37`] that allows token holders to destroy their tokens
+use crate::traits::aft37::{AFT37Error, Id};
+use ink::prelude::vec::Vec;
+use openbrush::traits::{AccountId, Balance};
 
-mod types;
+#[openbrush::wrapper]
+pub type AFT37BurnableRef = dyn AFT37Burnable;
+
+#[openbrush::trait_definition]
+pub trait AFT37Burnable {
+    /// Destroys `amount` tokens of token type `id` from `from`
+    ///
+    /// See [`AFT37::_burn_from`].
+    #[ink(message)]
+    fn burn(&mut self, from: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error>;
+}
