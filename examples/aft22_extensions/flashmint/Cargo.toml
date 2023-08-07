@@ -15,9 +15,7 @@ allfeat-contracts = { path = "../../..", default-features = false, features = ["
 openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", branch = "develop", default-features = false }
 
 [lib]
-name = "my_aft22_flashmint"
 path = "src/lib.rs"
-
 
 [features]
 default = ["std"]

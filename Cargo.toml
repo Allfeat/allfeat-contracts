@@ -29,7 +29,6 @@ allfeat_contracts_lang = { version = "0.1.0", path = "lang", default-features = 
 openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", branch = "develop", default-features = false, features = ["psp34"] }
 
 [lib]
-name = "allfeat_contracts"
 path = "src/lib.rs"
 crate-type = [
     "rlib",
