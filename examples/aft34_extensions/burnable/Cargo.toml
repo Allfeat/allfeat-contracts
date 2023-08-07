@@ -19,9 +19,7 @@ ink_e2e = "4.2.1"
 test_helpers = { git = "https://github.com/Brushfam/openbrush-contracts", branch = "develop", default-features = false }
 
 [lib]
-name = "my_aft34_burnable"
 path = "src/lib.rs"
-
 
 [features]
 default = ["std"]
