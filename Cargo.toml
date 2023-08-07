@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "lang",
+    "extensions/*"
 ]
 
 exclude = [

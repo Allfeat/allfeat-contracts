@@ -1,0 +1,59 @@
+[package]
+name = "allfeat_contracts_extensions_artists"
+version = "0.1.0"
+authors = ["Allfeat labs. - tech@allfeat.com"]
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# ink side
+ink-crate = { package = "ink", version = "4.2.1", default-features = false, optional = true }
+
+# substrate side
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.43", optional = true }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.43", optional = true }
+log = { version = "0.4.17", default-features = false, optional = true }
+
+pallet-artists = { version = "1.0.0-dev", default-features = false, git = "https://github.com/Allfeat/pallet-artists.git", branch = "master", optional = true }
+pallet-contracts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.43", optional = true }
+pallet-contracts-primitives = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.43", optional = true }
+
+sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.43", optional = true }
+sp-std = { version = "5.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.43", optional = true }
+sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.43", optional = true }
+
+# general
+scale = { package = "parity-scale-codec", version = "3.2.2", default-features = false, features = [
+    "derive",
+    "max-encoded-len"
+] }
+scale-info = { version = "2.6.0", default-features = false, features = [
+    "derive",
+], optional = true }
+
+
+[features]
+default = ["std"]
+std = [
+    "ink-crate/std",
+    "scale/std",
+    "scale-info/std",
+]
+substrate = [
+    "frame-support",
+    "frame-system",
+    "log",
+    "pallet-artists",
+    "pallet-contracts",
+    "pallet-contracts-primitives",
+    "sp-core",
+    "sp-std",
+    "sp-runtime"
+]
+ink = [
+    "ink-crate",
+]
