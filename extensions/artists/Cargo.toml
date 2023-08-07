@@ -39,9 +39,18 @@ scale-info = { version = "2.6.0", default-features = false, features = [
 [features]
 default = ["std"]
 std = [
-    "ink-crate/std",
+    "ink-crate?/std",
     "scale/std",
     "scale-info/std",
+    "sp-runtime?/std",
+    "sp-std?/std",
+    "sp-core?/std",
+    "pallet-contracts-primitives?/std",
+    "pallet-contracts?/std",
+    "pallet-artists?/std",
+    "log?/std",
+    "frame-system?/std",
+    "frame-support?/std"
 ]
 substrate = [
     "frame-support",
