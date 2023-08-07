@@ -19,24 +19,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use scale::{Decode, Encode, MaxEncodedLen};
+#[cfg(feature = "ink")]
+use ink_crate::prelude::vec::Vec;
+use scale::{Decode, Encode};
+#[cfg(feature = "substrate")]
+use sp_std::prelude::Vec;
 
-pub type MaxNameLength = [u8; u8::MAX as usize];
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Encode, Decode, MaxEncodedLen)]
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
-pub struct ArtistData<BlockNumber> {
+pub struct ArtistDataOutput<BlockNumber> {
     /// The name of the artist.
-    pub name: MaxNameLength,
+    pub name: Vec<u8>,
     /// The block number when the artist was created
     pub created_at: BlockNumber,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Encode, Decode, MaxEncodedLen)]
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
-pub struct CandidateData<BlockNumber> {
+pub struct CandidateDataOutput<BlockNumber> {
     /// The name of the candidate.
-    pub name: MaxNameLength,
+    pub name: Vec<u8>,
     /// The block number when the candidate was created
     pub created_at: BlockNumber,
 }

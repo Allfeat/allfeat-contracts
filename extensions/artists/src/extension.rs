@@ -19,7 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use crate::types::{ArtistData, CandidateData};
+use crate::types::{ArtistDataOutput, CandidateDataOutput};
 use ink_crate::env::{DefaultEnvironment, Environment};
 
 pub type AccountId = <DefaultEnvironment as Environment>::AccountId;
@@ -47,17 +47,17 @@ impl ArtistExtension {
     }
 
     // Chain State Queries
-    pub fn artists(account_id: AccountId) -> Option<ArtistData<BlockNumber>> {
+    pub fn artists(account_id: AccountId) -> Option<ArtistDataOutput<BlockNumber>> {
         ::ink_crate::env::chain_extension::ChainExtensionMethod::build(0051u32)
             .input::<AccountId>()
-            .output::<Option<ArtistData<BlockNumber>>, false>()
+            .output::<Option<ArtistDataOutput<BlockNumber>>, false>()
             .ignore_error_code()
             .call(&account_id)
     }
-    pub fn candidates(candidate_id: AccountId) -> Option<CandidateData<BlockNumber>> {
+    pub fn candidates(candidate_id: AccountId) -> Option<CandidateDataOutput<BlockNumber>> {
         ::ink_crate::env::chain_extension::ChainExtensionMethod::build(0052u32)
             .input::<AccountId>()
-            .output::<Option<CandidateData<BlockNumber>>, false>()
+            .output::<Option<CandidateDataOutput<BlockNumber>>, false>()
             .ignore_error_code()
             .call(&candidate_id)
     }

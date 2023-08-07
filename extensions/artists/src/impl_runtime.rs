@@ -23,6 +23,7 @@ use crate::errors::ArtistsError;
 use core::marker::PhantomData;
 use frame_support::dispatch::RawOrigin;
 use frame_support::pallet_prelude::Get;
+use pallet_artists::CandidateOf;
 use pallet_contracts::chain_extension::{
     BufInBufOutState, ChainExtension, ChargedAmount, Environment, Ext, InitState, RetVal, SysConfig,
 };
@@ -102,7 +103,8 @@ where
                 let account_id: T::AccountId = env.read_as()?;
 
                 charge_weight_read(&mut env)?;
-                let data = pallet_artists::Pallet::<T>::get_candidate(account_id);
+                let data: Option<CandidateOf<T>> =
+                    pallet_artists::Pallet::<T>::get_candidate(account_id);
                 env.write(&data.encode(), false, None)?
             }
         };

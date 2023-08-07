@@ -21,9 +21,10 @@
 
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-pub mod errors;
 pub mod types;
 
+#[cfg(feature = "substrate")]
+pub mod errors;
 #[cfg(feature = "ink")]
 pub mod extension;
 #[cfg(feature = "substrate")]
