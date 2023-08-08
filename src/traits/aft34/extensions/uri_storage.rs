@@ -19,18 +19,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use openbrush::traits::AccountId;
+/// Extension of [`AFT34`] that allows token holders to destroy their tokens
+use crate::traits::aft34::AFT34Error;
+use crate::traits::aft34::Id;
+use openbrush::traits::String;
 
-pub mod aft34;
-pub use aft34::*;
+pub type URI = String;
 
-pub mod extensions {
-    pub mod burnable;
-    pub mod enumerable;
-    pub mod metadata;
-    pub mod mintable;
-    pub mod uri_storage;
+#[openbrush::wrapper]
+pub type AFT34URIStorageRef = dyn AFT34URIStorage;
+
+#[openbrush::trait_definition]
+pub trait AFT34URIStorage {
+    #[ink(message)]
+    fn token_uri(&mut self, token_id: Id) -> Result<URI, AFT34Error>;
 }
-
-pub type Owner = AccountId;
-pub type Operator = AccountId;
