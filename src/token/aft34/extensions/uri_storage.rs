@@ -21,13 +21,14 @@
 
 pub use crate::{
     aft34,
+    aft34::extensions::uri_storage,
     traits::aft34::{extensions::uri_storage::*, *},
 };
 pub use aft34::{
     AFT34Impl, BalancesManager as _, Internal as _, InternalImpl as _, Operator, Owner,
 };
 use openbrush::storage::Mapping;
-use openbrush::traits::Storage;
+use openbrush::traits::{AccountId, Storage};
 
 #[derive(Default, Debug)]
 #[openbrush::storage_item]
@@ -36,7 +37,10 @@ pub struct Data {
     pub token_uris: Mapping<Id, URI>,
 }
 
-pub trait AFT34URIImpl: Storage<Data> {
+pub trait AFT34URIStorageImpl: Storage<Data> {
+    fn base_uri(&self) -> Option<URI> {
+        self.data().base_uri.clone()
+    }
     fn token_uri(&self, token_id: Id) -> Result<URI, AFT34Error> {
         let token_uri = self
             .data()
@@ -46,7 +50,7 @@ pub trait AFT34URIImpl: Storage<Data> {
         let base_uri = self.data().base_uri.clone();
 
         match base_uri {
-            // If both are set, concatenate the baseURI and tokenURI..
+            // If both are set, concatenate the baseURI and tokenURI.
             Some(base) => Ok(base + &token_uri),
             // If there is no base URI, return the token URI.
             None => Ok(token_uri),
@@ -57,19 +61,41 @@ pub trait AFT34URIImpl: Storage<Data> {
 pub trait Internal: aft34::Internal {
     /// Event is emitted when an URI is set for a token.
     fn _emit_attribute_set_event(&self, token_id: Id, token_uri: URI);
+    /// Event is emitted when the base URI is updated.
+    fn _emit_attribute_set_base_event(&self, base_uri: Option<URI>);
 
     /// Sets `token_uri` as the tokenURI of `token_id`.
     ///
     /// `token_id` must exist.
     fn _set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), AFT34Error>;
+
+    /// Sets `base_uri`.
+    fn _set_base_uri(&mut self, base_uri: Option<URI>);
+
+    /// This override additionally checks to see if
+    /// token-specific URI was set for the token, and if so, it deletes the token URI from
+    ///  the storage mapping.
+    fn _burn_from(&mut self, from: AccountId, id: Id) -> Result<(), AFT34Error>;
 }
 
 pub trait InternalImpl: Internal + Storage<Data> {
     fn _emit_attribute_set_event(&self, _token_id: Id, _token_uri: URI) {}
+    fn _emit_attribute_set_base_event(&self, _base_uri: Option<URI>) {}
 
     fn _set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), AFT34Error> {
         aft34::Internal::_owner_of(self, &token_id).ok_or(AFT34Error::TokenNotExists)?;
         self.data().token_uris.insert(&token_id, &token_uri);
+        Internal::_emit_attribute_set_event(self, token_id, token_uri);
         Ok(())
+    }
+
+    fn _set_base_uri(&mut self, base_uri: Option<URI>) {
+        self.data().base_uri = base_uri.clone();
+        Internal::_emit_attribute_set_base_event(self, base_uri)
+    }
+
+    fn _burn_from(&mut self, from: AccountId, id: Id) -> Result<(), AFT34Error> {
+        self.data().token_uris.remove(&id);
+        aft34::Internal::_burn_from(self, from, id)
     }
 }

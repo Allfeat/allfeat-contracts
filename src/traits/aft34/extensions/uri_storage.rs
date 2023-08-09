@@ -32,5 +32,7 @@ pub type AFT34URIStorageRef = dyn AFT34URIStorage;
 #[openbrush::trait_definition]
 pub trait AFT34URIStorage {
     #[ink(message)]
-    fn token_uri(&mut self, token_id: Id) -> Result<URI, AFT34Error>;
+    fn base_uri(&self) -> Option<URI>;
+    #[ink(message)]
+    fn token_uri(&self, token_id: Id) -> Result<URI, AFT34Error>;
 }

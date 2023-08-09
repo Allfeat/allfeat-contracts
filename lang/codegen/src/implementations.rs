@@ -1011,6 +1011,73 @@ pub(crate) fn impl_aft34_enumerable(impl_args: &mut ImplArgs) {
     impl_args.items.push(syn::Item::Impl(aft34_enumerable));
 }
 
+pub(crate) fn impl_aft34_uri_storage(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl uri_storage::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl uri_storage::Internal for #storage_struct_name {
+            fn _emit_attribute_set_event(&self, token_id: Id, token_uri: URI) {
+                uri_storage::InternalImpl::_emit_attribute_set_event(self, token_id, token_uri)
+            }
+            fn _emit_attribute_set_base_event(&self, base_uri: Option<URI>) {
+                uri_storage::InternalImpl::_emit_attribute_set_base_event(self, base_uri)
+            }
+
+            fn _set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), AFT34Error> {
+                uri_storage::InternalImpl::_set_token_uri(self, token_id, token_uri)
+            }
+
+            fn _set_base_uri(&mut self, base_uri: Option<URI>) {
+                uri_storage::InternalImpl::_set_base_uri(self, base_uri)
+            }
+
+            fn _burn_from(&mut self, from: AccountId, id: Id) -> Result<(), AFT34Error> {
+                uri_storage::InternalImpl::_burn_from(self, from, id)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let uri_storage_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT34URIStorageImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut uri_storage = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT34URIStorage for #storage_struct_name {
+            #[ink(message)]
+            fn base_uri(&self) -> Option<URI> {
+                AFT34URIStorageImpl::base_uri(self)
+            }
+            #[ink(message)]
+            fn token_uri(&self, token_id: Id) -> Result<URI, AFT34Error> {
+                AFT34URIStorageImpl::token_uri(self, token_id)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft34::extensions::uri_storage::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT34URIStorage", import);
+    impl_args.vec_import();
+
+    override_functions("aft34::Internal", &mut internal, impl_args.map);
+    override_functions("AFT34URIStorage", &mut uri_storage, impl_args.map);
+    override_functions("AFT34Burnable", &mut internal, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(uri_storage_impl));
+    impl_args.items.push(syn::Item::Impl(uri_storage));
+}
+
 pub(crate) fn impl_aft37(impl_args: &mut ImplArgs) {
     let storage_struct_name = impl_args.contract_name();
     let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
