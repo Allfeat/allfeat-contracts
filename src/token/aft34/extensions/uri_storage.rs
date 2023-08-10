@@ -37,23 +37,25 @@ pub struct Data {
     pub token_uris: Mapping<Id, URI>,
 }
 
-pub trait AFT34URIStorageImpl: Storage<Data> {
+pub trait AFT34URIStorageImpl: aft34::Internal + Storage<Data> {
     fn base_uri(&self) -> Option<URI> {
         self.data().base_uri.clone()
     }
-    fn token_uri(&self, token_id: Id) -> Result<URI, AFT34Error> {
-        let token_uri = self
-            .data()
-            .token_uris
-            .get(&token_id)
-            .ok_or(AFT34Error::TokenNotExists)?;
-        let base_uri = self.data().base_uri.clone();
+    fn token_uri(&self, token_id: Id) -> Result<Option<URI>, AFT34Error> {
+        aft34::Internal::_owner_of(self, &token_id).ok_or(AFT34Error::TokenNotExists)?;
+        let token_uri = self.data().token_uris.get(&token_id);
+        match token_uri {
+            None => Ok(None),
+            Some(uri) => {
+                let base_uri = self.data().base_uri.clone();
 
-        match base_uri {
-            // If both are set, concatenate the baseURI and tokenURI.
-            Some(base) => Ok(base + &token_uri),
-            // If there is no base URI, return the token URI.
-            None => Ok(token_uri),
+                match base_uri {
+                    // If both are set, concatenate the baseURI and tokenURI.
+                    Some(base) => Ok(Some(base + &uri)),
+                    // If there is no base URI, return the token URI.
+                    None => Ok(Some(uri)),
+                }
+            }
         }
     }
 }

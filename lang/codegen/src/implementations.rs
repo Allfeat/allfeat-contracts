@@ -1054,7 +1054,7 @@ pub(crate) fn impl_aft34_uri_storage(impl_args: &mut ImplArgs) {
                 AFT34URIStorageImpl::base_uri(self)
             }
             #[ink(message)]
-            fn token_uri(&self, token_id: Id) -> Result<URI, AFT34Error> {
+            fn token_uri(&self, token_id: Id) -> Result<Option<URI>, AFT34Error> {
                 AFT34URIStorageImpl::token_uri(self, token_id)
             }
         }

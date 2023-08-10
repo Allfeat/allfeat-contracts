@@ -34,5 +34,5 @@ pub trait AFT34URIStorage {
     #[ink(message)]
     fn base_uri(&self) -> Option<URI>;
     #[ink(message)]
-    fn token_uri(&self, token_id: Id) -> Result<URI, AFT34Error>;
+    fn token_uri(&self, token_id: Id) -> Result<Option<URI>, AFT34Error>;
 }
