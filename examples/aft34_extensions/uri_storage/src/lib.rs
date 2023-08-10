@@ -147,5 +147,60 @@ pub mod my_aft34_uri_storage {
 
             Ok(())
         }
+
+        #[ink_e2e::test]
+        async fn base_and_token_uri_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            let id = Id::U8(0);
+            let base = Some(URI::from("https://allfeat.network/"));
+            let uri = URI::from("aft34_1");
+
+            // testing without base uri
+            let constructor = ContractRef::new(base.clone());
+            let address = client
+                .instantiate(
+                    "my_aft34_uri_storage",
+                    &ink_e2e::alice(),
+                    constructor,
+                    0,
+                    None,
+                )
+                .await
+                .expect("instantiate failed")
+                .account_id;
+
+            let _mint = {
+                let _msg = build_message::<ContractRef>(address.clone())
+                    .call(|contract| contract.mint(address_of!(alice), id.clone()));
+                client
+                    .call(&ink_e2e::alice(), _msg, 0, None)
+                    .await
+                    .expect("mint failed")
+            }
+            .return_value();
+
+            let result_set_token_uri = {
+                let _msg = build_message::<ContractRef>(address.clone())
+                    .call(|contract| contract.set_token_uri(id.clone(), uri.clone()));
+                client
+                    .call(&ink_e2e::alice(), _msg, 0, None)
+                    .await
+                    .expect("set call failed")
+            }
+            .return_value();
+
+            // should have set now
+            assert_eq!(result_set_token_uri, Ok(()));
+
+            let result_token_uri = {
+                let _msg = build_message::<ContractRef>(address.clone())
+                    .call(|contract| contract.token_uri(id.clone()));
+                client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
+            }
+            .return_value();
+
+            assert_eq!(result_token_uri, Ok(Some(base.unwrap() + &uri)));
+
+            Ok(())
+        }
     }
 }
