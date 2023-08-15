@@ -5,7 +5,7 @@ use allfeat_contracts_extensions_artists::extension::ArtistExtension;
 #[ink::contract]
 mod artists_extension_wrapper {
     use super::*;
-    use allfeat_contracts_extensions_artists::types::{ArtistData, CandidateData};
+    use allfeat_contracts_extensions_artists::types::{ArtistDataOutput, CandidateDataOutput};
 
     #[ink(storage)]
     pub struct MyStorage;
@@ -28,11 +28,14 @@ mod artists_extension_wrapper {
 
         // Chain State Queries
         #[ink(message)]
-        pub fn artists(&self, account_id: AccountId) -> Option<ArtistData<BlockNumber>> {
+        pub fn artists(&self, account_id: AccountId) -> Option<ArtistDataOutput<BlockNumber>> {
             ArtistExtension::artists(account_id)
         }
         #[ink(message)]
-        pub fn candidates(&self, account_id: AccountId) -> Option<CandidateData<BlockNumber>> {
+        pub fn candidates(
+            &self,
+            account_id: AccountId,
+        ) -> Option<CandidateDataOutput<BlockNumber>> {
             ArtistExtension::candidates(account_id)
         }
     }
