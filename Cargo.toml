@@ -18,7 +18,7 @@ edition = "2021"
 
 [dependencies]
 # Import ink!
-ink = { version = "4.2.1", default-features = false}
+ink = { version = "4.3.0", default-features = false}
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
@@ -31,9 +31,6 @@ openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", branch = 
 
 [lib]
 path = "src/lib.rs"
-crate-type = [
-    "rlib",
-]
 
 [features]
 default = ["std"]
@@ -49,3 +46,13 @@ aft34 = []
 aft37 = []
 
 ink-as-dependency = []
+
+[profile.release]
+panic = "abort"
+lto = false
+
+[profile.dev]
+
+panic = "abort"
+lto = false
+overflow-checks = false

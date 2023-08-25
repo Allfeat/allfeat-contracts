@@ -39,7 +39,7 @@ pub mod my_aft37_metadata {
         #[rustfmt::skip]
         use super::*;
         #[rustfmt::skip]
-        use ink_e2e::{build_message};
+        use ink_e2e::build_message;
 
         type E2EResult<T> = Result<T, Box<dyn std::error::Error>>;
 

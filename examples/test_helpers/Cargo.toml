@@ -1,0 +1,11 @@
+[package]
+name = "test_helpers"
+version= "1.0.0-beta"
+authors = ["Allfeat labs <tech@allfeat.com>"]
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[profile.dev]
+codegen-units = 16

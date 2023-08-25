@@ -11,7 +11,7 @@ path = "src/lib.rs"
 
 [dependencies]
 # ink side
-ink-crate = { package = "ink", version = "4.2.1", default-features = false, optional = true }
+ink-crate = { package = "ink", version = "4.3.0", default-features = false, optional = true }
 
 # substrate side
 frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0", optional = true }

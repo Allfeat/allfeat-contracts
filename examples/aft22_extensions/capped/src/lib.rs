@@ -57,7 +57,7 @@ pub mod my_aft22_capped {
         #[rustfmt::skip]
         use super::*;
         #[rustfmt::skip]
-        use ink_e2e::{build_message, PolkadotConfig};
+        use ink_e2e::build_message;
 
         use test_helpers::{address_of, balance_of};
 

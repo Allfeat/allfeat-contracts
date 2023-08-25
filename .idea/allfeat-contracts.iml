@@ -20,6 +20,7 @@
       <sourceFolder url="file://$MODULE_DIR$/extensions/artists/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/extensions/artists/test_contract/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/aft34_extensions/uri_storage/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/test_helpers/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/lang/codegen/target" />
       <excludeFolder url="file://$MODULE_DIR$/lang/macros/target" />
       <excludeFolder url="file://$MODULE_DIR$/lang/target" />
@@ -36,6 +37,7 @@
       <excludeFolder url="file://$MODULE_DIR$/examples/aft22_extensions/wrapper/target" />
       <excludeFolder url="file://$MODULE_DIR$/extensions/artists/test_contract/target" />
       <excludeFolder url="file://$MODULE_DIR$/examples/aft34_extensions/uri_storage/target" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/test_helpers/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

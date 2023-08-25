@@ -66,7 +66,7 @@ pub mod my_aft22 {
         use super::*;
         use crate::hatedstorageaccessors_external::HatedStorageAccessors;
         use allfeat_contracts::aft22::aft22_external::AFT22;
-        use ink_e2e::{build_message, PolkadotConfig};
+        use ink_e2e::build_message;
         use test_helpers::{address_of, balance_of};
 
         type E2EResult<T> = Result<T, Box<dyn std::error::Error>>;

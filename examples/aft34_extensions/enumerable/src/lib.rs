@@ -30,7 +30,7 @@ pub mod my_aft34_enumerable {
         #[rustfmt::skip]
         use super::*;
         #[rustfmt::skip]
-        use ink_e2e::{build_message, PolkadotConfig};
+        use ink_e2e::build_message;
 
         use test_helpers::address_of;
 

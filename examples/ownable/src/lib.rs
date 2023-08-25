@@ -42,7 +42,7 @@ pub mod ownable {
         #[rustfmt::skip]
         use super::*;
         #[rustfmt::skip]
-        use ink_e2e::{build_message, PolkadotConfig};
+        use ink_e2e::build_message;
 
         use test_helpers::address_of;
 
