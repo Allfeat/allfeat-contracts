@@ -19,15 +19,32 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#[allow(clippy::module_inception)]
-mod aft34;
+pub use crate::traits::aft34::Id;
+/// Extension of [`PSP34`] that exposes the mint function
+pub use crate::traits::errors::AFT34Error;
+use ink::prelude::string::String as PreludeString;
+use openbrush::traits::{AccountId, Balance};
 
-pub use aft34::*;
-pub mod extensions {
-    pub mod burnable;
-    pub mod enumerable;
-    pub mod metadata;
-    pub mod mintable;
-    pub mod payable_mint;
-    pub mod uri_storage;
+#[openbrush::wrapper]
+pub type AFT34PayableMintRef = dyn AFT34PayableMint;
+
+#[openbrush::trait_definition]
+pub trait AFT34PayableMint {
+    #[ink(message, payable)]
+    fn mint(&mut self, to: AccountId, mint_amount: u64) -> Result<(), AFT34Error>;
+
+    #[ink(message)]
+    fn withdraw(&mut self) -> Result<(), AFT34Error>;
+
+    #[ink(message)]
+    fn set_base_uri(&mut self, uri: PreludeString) -> Result<(), AFT34Error>;
+
+    #[ink(message)]
+    fn token_uri(&self, token_id: u64) -> Result<PreludeString, AFT34Error>;
+
+    #[ink(message)]
+    fn max_supply(&self) -> u64;
+
+    #[ink(message)]
+    fn price(&self) -> Balance;
 }
