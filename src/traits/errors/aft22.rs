@@ -50,7 +50,9 @@ impl From<OwnableError> for AFT22Error {
             OwnableError::CallerIsNotOwner => {
                 AFT22Error::Custom(String::from("O::CallerIsNotOwner"))
             }
-            OwnableError::NewOwnerIsZero => AFT22Error::Custom(String::from("O::NewOwnerIsZero")),
+            OwnableError::NewOwnerIsNotSet => {
+                AFT22Error::Custom(String::from("O::NewOwnerIsNotSet"))
+            }
         }
     }
 }
