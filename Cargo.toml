@@ -27,7 +27,7 @@ scale-info = { version = "2.6", default-features = false, features = ["derive"],
 allfeat_contracts_lang = { version = "0.1.0", path = "lang", default-features = false }
 
 # OpenBrush dependency
-openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", branch = "develop", default-features = false, features = ["psp34"] }
+openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0-beta.1", default-features = false, features = ["psp34"] }
 
 [lib]
 path = "src/lib.rs"

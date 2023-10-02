@@ -12,7 +12,7 @@ scale-info = { version = "2.6", default-features = false, features = ["derive"],
 
 # These dependencies
 allfeat-contracts = { path = "../..", default-features = false, features = ["aft34"] }
-openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", branch = "develop", default-features = false, features = ["ownable"] }
+openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0-beta.1", default-features = false, features = ["ownable"] }
 
 [dev-dependencies]
 ink_e2e = "4.3.0"
