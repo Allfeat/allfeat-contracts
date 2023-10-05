@@ -32,8 +32,8 @@ pub enum AFT37Error {
     Custom(String),
     /// Returned if the account doesn't contain enough funds.
     InsufficientBalance,
-    /// Returned if recipient is zero account.
-    TransferToZeroAddress,
+    /// Returned if recipient address is not set.
+    TransferToNonSetAddress,
     /// Returned if token doesn't exist
     TokenNotExists,
     /// Returned if the caller is not allowed.
@@ -50,7 +50,9 @@ impl From<OwnableError> for AFT37Error {
             OwnableError::CallerIsNotOwner => {
                 AFT37Error::Custom(String::from("O::CallerIsNotOwner"))
             }
-            OwnableError::NewOwnerIsZero => AFT37Error::Custom(String::from("O::NewOwnerIsZero")),
+            OwnableError::NewOwnerIsNotSet => {
+                AFT37Error::Custom(String::from("O::NewOwnerIsNotSet"))
+            }
         }
     }
 }

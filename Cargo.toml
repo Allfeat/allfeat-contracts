@@ -1,12 +1,7 @@
 [workspace]
-members = [
-    "lang",
-    "extensions/*"
-]
+members = ["lang", "extensions/*"]
 
-exclude = [
-    "examples",
-]
+exclude = ["examples"]
 
 [package]
 name = "allfeat-contracts"
@@ -18,16 +13,22 @@ edition = "2021"
 
 [dependencies]
 # Import ink!
-ink = { version = "4.3.0", default-features = false}
+ink = { version = "4.3.0", default-features = false }
 
-scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
-scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
+    "derive",
+] }
+scale-info = { version = "2.6", default-features = false, features = [
+    "derive",
+], optional = true }
 
 # Allfeat contracts macros
 allfeat_contracts_lang = { version = "0.1.0", path = "lang", default-features = false }
 
 # OpenBrush dependency
-openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0-beta.1", default-features = false, features = ["psp34"] }
+openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0", default-features = false, features = [
+    "psp34",
+] }
 
 [lib]
 path = "src/lib.rs"

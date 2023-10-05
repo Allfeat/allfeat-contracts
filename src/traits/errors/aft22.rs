@@ -37,9 +37,9 @@ pub enum AFT22Error {
     /// Returned if not enough allowance to fulfill a request is available.
     InsufficientAllowance,
     /// Returned if recipient's address is zero.
-    ZeroRecipientAddress,
+    RecipientIsNotSet,
     /// Returned if sender's address is zero.
-    ZeroSenderAddress,
+    SenderIsNotSet,
     /// Returned if safe transfer check fails
     SafeTransferCheckFailed(String),
 }
@@ -50,7 +50,9 @@ impl From<OwnableError> for AFT22Error {
             OwnableError::CallerIsNotOwner => {
                 AFT22Error::Custom(String::from("O::CallerIsNotOwner"))
             }
-            OwnableError::NewOwnerIsZero => AFT22Error::Custom(String::from("O::NewOwnerIsZero")),
+            OwnableError::NewOwnerIsNotSet => {
+                AFT22Error::Custom(String::from("O::NewOwnerIsNotSet"))
+            }
         }
     }
 }
@@ -93,16 +95,16 @@ impl From<AFT22Error> for FlashLenderError {
         match error {
             AFT22Error::Custom(message) => FlashLenderError::Custom(message),
             AFT22Error::InsufficientBalance => {
-                FlashLenderError::Custom(String::from("PSP22: Insufficient Balance"))
+                FlashLenderError::Custom(String::from("AFT22: Insufficient Balance"))
             }
             AFT22Error::InsufficientAllowance => {
-                FlashLenderError::Custom(String::from("PSP22: Insufficient Allowance"))
+                FlashLenderError::Custom(String::from("AFT22: Insufficient Allowance"))
             }
-            AFT22Error::ZeroRecipientAddress => {
-                FlashLenderError::Custom(String::from("PSP22: Zero Recipient Address"))
+            AFT22Error::RecipientIsNotSet => {
+                FlashLenderError::Custom(String::from("AFT22: Zero Recipient Address"))
             }
-            AFT22Error::ZeroSenderAddress => {
-                FlashLenderError::Custom(String::from("PSP22: Zero Sender Address"))
+            AFT22Error::SenderIsNotSet => {
+                FlashLenderError::Custom(String::from("AFT22: Sender Address is not set"))
             }
             AFT22Error::SafeTransferCheckFailed(message) => FlashLenderError::Custom(message),
         }
@@ -136,9 +138,9 @@ pub enum AFT22TokenTimelockError {
     /// Returned if the timestamp provided is before the current time
     ReleaseTimeIsBeforeCurrentTime,
     /// Returned if the token is not initialized
-    TokenZeroAddress,
+    TokenIsNotSet,
     /// Returned if the beneficiary is not initialized
-    BeneficiaryZeroAddress,
+    BeneficiaryIsNotSet,
 }
 
 impl From<AFT22Error> for AFT22TokenTimelockError {
@@ -153,11 +155,11 @@ impl From<AFT22Error> for AFT22TokenTimelockError {
             AFT22Error::InsufficientAllowance => {
                 AFT22TokenTimelockError::AFT22Error(AFT22Error::InsufficientAllowance)
             }
-            AFT22Error::ZeroRecipientAddress => {
-                AFT22TokenTimelockError::AFT22Error(AFT22Error::ZeroRecipientAddress)
+            AFT22Error::RecipientIsNotSet => {
+                AFT22TokenTimelockError::AFT22Error(AFT22Error::RecipientIsNotSet)
             }
-            AFT22Error::ZeroSenderAddress => {
-                AFT22TokenTimelockError::AFT22Error(AFT22Error::ZeroSenderAddress)
+            AFT22Error::SenderIsNotSet => {
+                AFT22TokenTimelockError::AFT22Error(AFT22Error::SenderIsNotSet)
             }
             AFT22Error::SafeTransferCheckFailed(message) => {
                 AFT22TokenTimelockError::AFT22Error(AFT22Error::SafeTransferCheckFailed(message))

@@ -71,7 +71,7 @@ pub trait AFT37 {
     ///
     /// # Errors
     ///
-    /// Returns `TransferToZeroAddress` error if recipient is zero account.
+    /// Returns `TransferToNonSetAddress` error if recipient is zero account.
     ///
     /// Returns `NotAllowed` error if transfer is not approved.
     ///
@@ -93,7 +93,7 @@ pub trait AFT37 {
     ///
     /// # Errors
     ///
-    /// Returns `TransferToZeroAddress` error if recipient is zero account.
+    /// Returns `TransferToNonSetAddress` error if recipient is zero account.
     ///
     /// Returns `NotAllowed` error if transfer is not approved.
     ///

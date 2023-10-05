@@ -18,7 +18,6 @@ pub struct HatedStorage {
 #[allfeat_contracts::contract]
 pub mod my_aft22 {
     use crate::*;
-    use openbrush::traits::String;
 
     #[ink(storage)]
     #[derive(Storage)]

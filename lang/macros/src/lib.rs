@@ -47,7 +47,7 @@ pub fn contract(_attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
 /// # Example
 ///
 /// ```skip
-/// #[openbrush::implementation(PSP22)]
+/// #[openbrush::implementation(AFT22)]
 /// #[openbrush::contract]
 /// pub mod MyInkToken {
 ///     use openbrush::traits::Storage;
@@ -56,22 +56,22 @@ pub fn contract(_attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
 ///     #[derive(Storage)]
 ///     pub struct MyInkToken {
 ///         #[storage_field]
-///         psp22: psp22::Data
+///         aft22: aft22::Data
 ///     }
 ///
-///     // this will override a function from psp22::Internal
-///     #[overrider(psp22::Internal)]
+///     // this will override a function from aft22::Internal
+///     #[overrider(aft22::Internal)]
 ///     fn _before_token_transfer(
 ///         &mut self,
 ///         from: Option<&AccountId>,
 ///         to: Option<&AccountId>,
 ///         amount: &Balance,
-///     ) -> Result<(), PSP22Error> {
+///     ) -> Result<(), AFT22Error> {
 ///         // here we can change the behavior before token transfer
 ///     }
 ///
-///     // this will override a function from PSP22
-///     #[overrider(PSP22)]
+///     // this will override a function from AFT22
+///     #[overrider(AFT22)]
 ///     fn balance_of(&self, owner: AccountId) -> Balance {
 ///          // here we can change the behavior of balance_of
 ///     }
@@ -80,7 +80,7 @@ pub fn contract(_attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
 ///     // however, it will add the modifier (and possibly other attributes defined by user)
 ///     // to the function. In this case, we don't even have to worry about the attributes and
 ///     // return type of the function
-///     #[default_impl(PSP22)]
+///     #[default_impl(AFT22)]
 ///     #[modifiers(...)]
 ///     fn transfer_from() {}
 ///

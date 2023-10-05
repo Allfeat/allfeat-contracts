@@ -65,7 +65,7 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
 
     let mut impl_args = ImplArgs::new(&map, &mut items, &mut imports, &mut overriden_traits, ident);
 
-    for to_implement in args {
+    for to_implement in args.clone() {
         match to_implement.as_str() {
             "AFT22" => impl_aft22(&mut impl_args),
             "AFT22Mintable" => impl_aft22_mintable(&mut impl_args),
@@ -89,6 +89,10 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
             "AFT37Enumerable" => impl_aft37_enumerable(&mut impl_args),
             _ => panic!("allfeat_contracts::implementation({to_implement}) not implemented!"),
         }
+    }
+
+    if args.contains(&String::from("AFT22")) {
+        impl_aft22_transfer(&mut impl_args, args.contains(&String::from("AFT22Capped")));
     }
 
     cleanup_imports(impl_args.imports);

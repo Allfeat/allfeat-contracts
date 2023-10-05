@@ -22,14 +22,12 @@ ink_ir = { version = "4.3.0", default-features = false }
 ink_primitives = { version = "4.3.0", default-features = false }
 synstructure = "0.12"
 
-openbrush_lang_codegen = {git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0-beta.1", default-features = false}
+openbrush_lang_codegen = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0", default-features = false }
 
 [lib]
 name = "allfeat_contracts_lang_codegen"
 path = "src/lib.rs"
-crate-type = [
-    "rlib",
-]
+crate-type = ["rlib"]
 
 [features]
 default = ["std"]

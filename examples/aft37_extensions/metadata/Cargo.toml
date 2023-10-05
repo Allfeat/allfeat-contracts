@@ -1,18 +1,24 @@
 [package]
 name = "my_aft37_metadata"
-version= "0.1.0"
+version = "0.1.0"
 authors = ["Allfeat labs <tech@allfeat.com>"]
 edition = "2021"
 
 [dependencies]
-ink = { version = "4.3.0", default-features = false}
+ink = { version = "4.3.0", default-features = false }
 
-scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
-scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
+    "derive",
+] }
+scale-info = { version = "2.6", default-features = false, features = [
+    "derive",
+], optional = true }
 
 # These dependencies
-allfeat-contracts = { path = "../../..", default-features = false, features = ["aft37"] }
-openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0-beta.1", default-features = false }
+allfeat-contracts = { path = "../../..", default-features = false, features = [
+    "aft37",
+] }
+openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0", default-features = false }
 
 [dev-dependencies]
 ink_e2e = "4.3.0"
@@ -30,7 +36,7 @@ std = [
     "scale-info/std",
     # These dependencies
     "allfeat-contracts/std",
-    "openbrush/std"
+    "openbrush/std",
 ]
 ink-as-dependency = []
 e2e-tests = []

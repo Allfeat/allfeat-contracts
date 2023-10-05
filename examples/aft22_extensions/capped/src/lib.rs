@@ -3,7 +3,7 @@
 #[allfeat_contracts::implementation(AFT22, AFT22Capped, AFT22Mintable)]
 #[allfeat_contracts::contract]
 pub mod my_aft22_capped {
-    use openbrush::traits::{Storage, String};
+    use openbrush::traits::Storage;
 
     #[ink(storage)]
     #[derive(Default, Storage)]

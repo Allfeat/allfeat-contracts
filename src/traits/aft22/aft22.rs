@@ -55,9 +55,9 @@ pub trait AFT22 {
     /// Returns `InsufficientBalance` error if there are not enough tokens on
     /// the caller's account Balance.
     ///
-    /// Returns `ZeroSenderAddress` error if sender's address is zero.
+    /// Returns `SenderIsNotSet` error if sender's address is zero.
     ///
-    /// Returns `ZeroRecipientAddress` error if recipient's address is zero.
+    /// Returns `RecipientIsNotSet` error if recipient's address is zero.
     #[ink(message)]
     fn transfer(&mut self, to: AccountId, value: Balance, data: Vec<u8>) -> Result<(), AFT22Error>;
 
@@ -77,9 +77,9 @@ pub trait AFT22 {
     /// Returns `InsufficientBalance` error if there are not enough tokens on
     /// the the account Balance of `from`.
     ///
-    /// Returns `ZeroSenderAddress` error if sender's address is zero.
+    /// Returns `SenderIsNotSet` error if sender's address is zero.
     ///
-    /// Returns `ZeroRecipientAddress` error if recipient's address is zero.
+    /// Returns `RecipientIsNotSet` error if recipient's address is zero.
     #[ink(message)]
     fn transfer_from(
         &mut self,
@@ -89,30 +89,15 @@ pub trait AFT22 {
         data: Vec<u8>,
     ) -> Result<(), AFT22Error>;
 
-    /// Allows `spender` to withdraw from the caller's account multiple times, up to
-    /// the `value` amount.
-    ///
-    /// If this function is called again it overwrites the current allowance with `value`.
-    ///
-    /// An `Approval` event is emitted.
-    ///
-    /// # Errors
-    ///
-    /// Returns `ZeroSenderAddress` error if sender's address is zero.
-    ///
-    /// Returns `ZeroRecipientAddress` error if recipient's address is zero.
-    #[ink(message)]
-    fn approve(&mut self, spender: AccountId, value: Balance) -> Result<(), AFT22Error>;
-
     /// Atomically increases the allowance granted to `spender` by the caller.
     ///
     /// An `Approval` event is emitted.
     ///
     /// # Errors
     ///
-    /// Returns `ZeroSenderAddress` error if sender's address is zero.
+    /// Returns `SenderIsNotSet` error if sender's address is zero.
     ///
-    /// Returns `ZeroRecipientAddress` error if recipient's address is zero.
+    /// Returns `RecipientIsNotSet` error if recipient's address is zero.
     #[ink(message)]
     fn increase_allowance(
         &mut self,
@@ -129,9 +114,9 @@ pub trait AFT22 {
     /// Returns `InsufficientAllowance` error if there are not enough tokens allowed
     /// by owner for `spender`.
     ///
-    /// Returns `ZeroSenderAddress` error if sender's address is zero.
+    /// Returns `SenderIsNotSet` error if sender's address is zero.
     ///
-    /// Returns `ZeroRecipientAddress` error if recipient's address is zero.
+    /// Returns `RecipientIsNotSet` error if recipient's address is zero.
     #[ink(message)]
     fn decrease_allowance(
         &mut self,
