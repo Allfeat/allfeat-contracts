@@ -14,7 +14,7 @@ pub mod my_aft22_capped {
         cap: capped::Data,
     }
 
-    #[overrider(aft22::Internal)]
+    #[overrider(aft22::AFT22Transfer)]
     fn _before_token_transfer(
         &mut self,
         from: Option<&AccountId>,
