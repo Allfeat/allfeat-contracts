@@ -18,7 +18,6 @@ pub struct HatedStorage {
 #[allfeat_contracts::contract]
 pub mod my_aft22 {
     use crate::*;
-    use openbrush::traits::String;
 
     #[ink(storage)]
     #[derive(Storage)]
@@ -29,7 +28,7 @@ pub mod my_aft22 {
         hated_storage: HatedStorage,
     }
 
-    #[overrider(aft22::Internal)]
+    #[overrider(aft22::AFT22Transfer)]
     fn _before_token_transfer(
         &mut self,
         _from: Option<&AccountId>,

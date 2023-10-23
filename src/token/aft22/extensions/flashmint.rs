@@ -22,14 +22,17 @@
 pub use crate::{aft22, aft22::extensions::flashmint, traits::aft22::*};
 pub use aft22::{AFT22Impl, Internal as _, InternalImpl as _};
 pub use flashmint::Internal as _;
-use ink::{env::CallFlags, prelude::vec::Vec};
+use ink::{
+    env::CallFlags,
+    prelude::{vec, vec::Vec},
+};
 pub use openbrush::contracts::traits::flashloan::*;
 use openbrush::traits::{AccountId, Balance, Storage, String};
 
 pub trait FlashLenderImpl: Storage<aft22::Data> + aft22::Internal + AFT22 + Internal {
     fn max_flashloan(&mut self, token: AccountId) -> Balance {
         if token == Self::env().account_id() {
-            Balance::MAX - self.total_supply()
+            aft22::Internal::_max_supply(self) - self.total_supply()
         } else {
             0
         }
@@ -63,7 +66,24 @@ pub trait FlashLenderImpl: Storage<aft22::Data> + aft22::Internal + AFT22 + Inte
             this,
             current_allowance - amount - fee,
         )?;
-        aft22::Internal::_burn_from(self, receiver_account, amount + fee)?;
+
+        let flash_fee_receiver = self._flash_fee_receiver();
+
+        if let Some(fee_receiver) = flash_fee_receiver {
+            if fee == 0 {
+                aft22::Internal::_burn_from(self, receiver_account, amount + fee)?;
+            } else {
+                aft22::Internal::_burn_from(self, receiver_account, amount)?;
+                aft22::Internal::_transfer_from_to(
+                    self,
+                    receiver_account,
+                    fee_receiver,
+                    fee,
+                    vec![],
+                )?;
+            }
+        }
+
         Ok(())
     }
 }
@@ -79,6 +99,8 @@ pub trait Internal {
         amount: Balance,
         data: Vec<u8>,
     ) -> Result<(), FlashLenderError>;
+
+    fn _flash_fee_receiver(&self) -> Option<AccountId>;
 }
 
 pub trait InternalImpl: Storage<aft22::Data> + Internal {
@@ -103,7 +125,7 @@ pub trait InternalImpl: Storage<aft22::Data> + Internal {
             data,
         )
         .call_flags(CallFlags::default().set_allow_reentry(true));
-        let result = match builder.try_invoke() {
+        match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
             Ok(Ok(Err(FlashBorrowerError::FlashloanRejected(message)))) => {
                 Err(FlashLenderError::BorrowerRejected(message))
@@ -115,8 +137,10 @@ pub trait InternalImpl: Storage<aft22::Data> + Internal {
             _ => Err(FlashLenderError::BorrowerRejected(String::from(
                 "Error while performing the `on_flashloan`",
             ))),
-        };
+        }
+    }
 
-        result
+    fn _flash_fee_receiver(&self) -> Option<AccountId> {
+        None
     }
 }

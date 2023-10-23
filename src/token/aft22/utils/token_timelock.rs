@@ -101,10 +101,10 @@ pub trait InternalImpl: Storage<Data> + Internal {
                     .unwrap()?;
                 Ok(())
             } else {
-                Err(AFT22TokenTimelockError::TokenZeroAddress)
+                Err(AFT22TokenTimelockError::TokenIsNotSet)
             }
         } else {
-            Err(AFT22TokenTimelockError::BeneficiaryZeroAddress)
+            Err(AFT22TokenTimelockError::BeneficiaryIsNotSet)
         }
     }
 

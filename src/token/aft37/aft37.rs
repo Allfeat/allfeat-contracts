@@ -132,7 +132,7 @@ pub trait Internal {
     ///
     /// # Errors
     ///
-    /// Returns with `TransferToZeroAddress` error if `to` is zero account.
+    /// Returns with `TransferToNonSetAddress` error if `to` non set account.
     fn _mint_to(
         &mut self,
         to: AccountId,

@@ -26,7 +26,7 @@ pub use crate::{
 };
 pub use aft22::{AFT22Impl, Internal as _, InternalImpl as _};
 pub use capped::Internal as _;
-use openbrush::traits::{Balance, Storage, String};
+use openbrush::traits::{AccountId, Balance, Storage, String};
 
 #[derive(Default, Debug)]
 #[openbrush::storage_item]
@@ -68,5 +68,29 @@ pub trait InternalImpl: Storage<Data> + Internal + AFT22 {
 
     fn _cap(&self) -> Balance {
         self.data().cap.get_or_default()
+    }
+}
+
+pub trait AFT22TransferImpl: Internal {
+    fn _before_token_transfer(
+        &mut self,
+        _from: Option<&AccountId>,
+        _to: Option<&AccountId>,
+        _amount: &Balance,
+    ) -> Result<(), AFT22Error> {
+        if _from.is_none() && _to.is_some() && Internal::_is_cap_exceeded(self, _amount) {
+            return Err(AFT22Error::Custom(String::from("Cap exceeded")));
+        }
+
+        Ok(())
+    }
+
+    fn _after_token_transfer(
+        &mut self,
+        _from: Option<&AccountId>,
+        _to: Option<&AccountId>,
+        _amount: &Balance,
+    ) -> Result<(), AFT22Error> {
+        Ok(())
     }
 }
