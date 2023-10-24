@@ -911,6 +911,67 @@ pub(crate) fn impl_aft34_mintable(impl_args: &mut ImplArgs) {
     impl_args.items.push(syn::Item::Impl(mintable));
 }
 
+pub(crate) fn impl_aft34_payable_mint(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft34::extensions::payable_mint::Internal for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let payable_mint_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT34PayableMintImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut payable_mint = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT34PayableMint for #storage_struct_name {
+            #[ink(message, payable)]
+            fn mint(&mut self, to: AccountId, mint_amount: u64) -> Result<(), AFT34Error> {
+                AFT34PayableMintImpl::mint(self, to, mint_amount)
+            }
+
+            #[ink(message)]
+            fn withdraw(&mut self) -> Result<(), AFT34Error> {
+                AFT34PayableMintImpl::withdraw(self)
+            }
+
+            #[ink(message)]
+            fn set_base_uri(&mut self, uri: PreludeString) -> Result<(), AFT34Error> {
+                AFT34PayableMintImpl::set_base_uri(self, uri)
+            }
+
+            #[ink(message)]
+            fn token_uri(&self, token_id: u64) -> Result<PreludeString, AFT34Error> {
+                AFT34PayableMintImpl::token_uri(self, token_id)
+            }
+
+            #[ink(message)]
+            fn max_supply(&self) -> u64 {
+                AFT34PayableMintImpl::max_supply(self)
+            }
+
+            #[ink(message)]
+            fn price(&self) -> Balance {
+                AFT34PayableMintImpl::price(self)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft34::extensions::payable_mint::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT34PayableMint", import);
+    impl_args.vec_import();
+
+    override_functions("AFT34PayableMint", &mut payable_mint, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(payable_mint_impl));
+    impl_args.items.push(syn::Item::Impl(payable_mint));
+}
+
 pub(crate) fn impl_aft34_metadata(impl_args: &mut ImplArgs) {
     let storage_struct_name = impl_args.contract_name();
     let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(

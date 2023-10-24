@@ -28,6 +28,7 @@ allfeat_contracts_lang = { version = "0.1.0", path = "lang", default-features = 
 # OpenBrush dependency
 openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0", default-features = false, features = [
     "psp34",
+    "ownable",
 ] }
 
 [lib]

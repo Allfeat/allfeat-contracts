@@ -81,6 +81,7 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
             "AFT34Metadata" => impl_aft34_metadata(&mut impl_args),
             "AFT34Enumerable" => impl_aft34_enumerable(&mut impl_args),
             "AFT34Mintable" => impl_aft34_mintable(&mut impl_args),
+            "AFT34PayableMint" => impl_aft34_payable_mint(&mut impl_args),
             "AFT34URIStorage" => impl_aft34_uri_storage(&mut impl_args),
             "AFT37" => impl_aft37(&mut impl_args),
             "AFT37Batch" => impl_aft37_batch(&mut impl_args),
@@ -134,6 +135,7 @@ fn cleanup_imports(imports: &mut HashMap<&str, syn::ItemUse>) {
 
     let aft34_impls = vec![
         "AFT34Mintable",
+        "AFT34PayableMint",
         "AFT34Burnable",
         "AFT34Metadata",
         "AFT34Enumerable",
