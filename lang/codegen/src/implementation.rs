@@ -89,6 +89,7 @@ pub fn generate(attrs: TokenStream, ink_module: TokenStream) -> TokenStream {
             "AFT37Metadata" => impl_aft37_metadata(&mut impl_args),
             "AFT37Mintable" => impl_aft37_mintable(&mut impl_args),
             "AFT37Enumerable" => impl_aft37_enumerable(&mut impl_args),
+            "AFT37URIStorage" => impl_aft37_uri_storage(&mut impl_args),
             _ => panic!("allfeat_contracts::implementation({to_implement}) not implemented!"),
         }
     }

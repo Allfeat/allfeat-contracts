@@ -19,15 +19,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#[allow(clippy::module_inception)]
-mod aft37;
+/// Extension of [`AFT37`] that allows token holders to destroy their tokens
+use crate::traits::aft37::AFT37Error;
+use crate::traits::aft37::Id;
+use openbrush::traits::String;
 
-pub use aft37::*;
-pub mod extensions {
-    pub mod batch;
-    pub mod burnable;
-    pub mod enumerable;
-    pub mod metadata;
-    pub mod mintable;
-    pub mod uri_storage;
+pub type URI = String;
+
+#[openbrush::wrapper]
+pub type AFT37URIStorageRef = dyn AFT37URIStorage;
+
+#[openbrush::trait_definition]
+pub trait AFT37URIStorage {
+    #[ink(message)]
+    fn base_uri(&self) -> Option<URI>;
+    #[ink(message)]
+    fn token_uri(&self, token_id: Id) -> Result<Option<URI>, AFT37Error>;
 }

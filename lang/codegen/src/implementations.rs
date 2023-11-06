@@ -1211,6 +1211,10 @@ pub(crate) fn impl_aft37(impl_args: &mut ImplArgs) {
                 aft37::InternalImpl::_emit_approval_event(self, owner, operator, id, value)
             }
 
+            fn _token_exists(&self, id: &Id) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_token_exists(self, id)
+            }
+
             fn _mint_to(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
                 aft37::InternalImpl::_mint_to(self, to, ids_amounts)
             }
@@ -1693,4 +1697,72 @@ pub(crate) fn impl_aft37_enumerable(impl_args: &mut ImplArgs) {
 
     impl_args.items.push(syn::Item::Impl(enumerable_impl));
     impl_args.items.push(syn::Item::Impl(aft37_enumerable));
+}
+
+pub(crate) fn impl_aft37_uri_storage(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl uri_storage::InternalImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
+        impl uri_storage::Internal for #storage_struct_name {
+            fn _emit_attribute_set_event(&self, token_id: Id, token_uri: URI) {
+                uri_storage::InternalImpl::_emit_attribute_set_event(self, token_id, token_uri)
+            }
+
+            fn _emit_attribute_set_base_event(&self, base_uri: Option<URI>) {
+                uri_storage::InternalImpl::_emit_attribute_set_base_event(self, base_uri)
+            }
+
+            fn _set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), AFT37Error> {
+                uri_storage::InternalImpl::_set_token_uri(self, token_id, token_uri)
+            }
+
+            fn _set_base_uri(&mut self, base_uri: Option<URI>) {
+                uri_storage::InternalImpl::_set_base_uri(self, base_uri)
+            }
+
+            fn _burn_from(&mut self, from: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
+                uri_storage::InternalImpl::_burn_from(self, from, ids_amounts)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let uri_storage_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37URIStorageImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut uri_storage = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37URIStorage for #storage_struct_name {
+            #[ink(message)]
+            fn base_uri(&self) -> Option<URI> {
+                AFT37URIStorageImpl::base_uri(self)
+            }
+            #[ink(message)]
+            fn token_uri(&self, token_id: Id) -> Result<Option<URI>, AFT37Error> {
+                AFT37URIStorageImpl::token_uri(self, token_id)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::extensions::uri_storage::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37URIStorage", import);
+    impl_args.vec_import();
+
+    override_functions("aft37::Internal", &mut internal, impl_args.map);
+    override_functions("AFT37URIStorage", &mut uri_storage, impl_args.map);
+    override_functions("AFT37Burnable", &mut internal, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(internal));
+    impl_args.items.push(syn::Item::Impl(uri_storage_impl));
+    impl_args.items.push(syn::Item::Impl(uri_storage));
 }
