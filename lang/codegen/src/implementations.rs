@@ -1211,6 +1211,10 @@ pub(crate) fn impl_aft37(impl_args: &mut ImplArgs) {
                 aft37::InternalImpl::_emit_approval_event(self, owner, operator, id, value)
             }
 
+            fn _token_exists(&self, id: &Id) -> Result<(), AFT37Error> {
+                aft37::InternalImpl::_token_exists(self, id)
+            }
+
             fn _mint_to(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
                 aft37::InternalImpl::_mint_to(self, to, ids_amounts)
             }

@@ -126,6 +126,13 @@ pub trait Internal {
         value: Balance,
     );
 
+    /// Checks if `id` exists.
+    ///
+    /// # Errors
+    ///
+    /// Returns with `TokenNotExists` error if `id` token does not exist.
+    fn _token_exists(&self, id: &Id) -> Result<(), AFT37Error>;
+
     /// Creates `amount` tokens of token type `id` to `to`.
     ///
     /// On success a `TransferSingle` event is emitted if length of `ids_amounts` is 1, otherwise `TransferBatch` event.
@@ -234,6 +241,13 @@ pub trait InternalImpl: Internal + BalancesManager + Sized {
         _id: Option<Id>,
         _value: Balance,
     ) {
+    }
+
+    fn _token_exists(&self, id: &Id) -> Result<(), AFT37Error> {
+        if self._total_supply(&Some(id)) == 0 {
+            Err(AFT37Error::TokenNotExists)?
+        }
+        Ok(())
     }
 
     fn _mint_to(
