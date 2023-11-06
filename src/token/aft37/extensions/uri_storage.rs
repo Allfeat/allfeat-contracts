@@ -87,6 +87,7 @@ pub trait InternalImpl: Internal + Storage<Data> {
     fn _emit_attribute_set_base_event(&self, _base_uri: Option<URI>) {}
 
     fn _set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), AFT37Error> {
+        aft37::Internal::_token_exists(self, &token_id)?;
         self.data().token_uris.insert(&token_id, &token_uri);
         Internal::_emit_attribute_set_event(self, token_id, token_uri);
         Ok(())
