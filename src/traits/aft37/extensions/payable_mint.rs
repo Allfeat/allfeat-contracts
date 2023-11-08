@@ -19,15 +19,32 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-pub mod aft37;
+pub use crate::traits::aft37::Id;
+/// Extension of [`PSP37`] that exposes the mint function
+pub use crate::traits::errors::AFT37Error;
+use ink::prelude::vec::Vec;
+use openbrush::traits::{AccountId, Balance};
 
-pub use aft37::*;
-pub mod extensions {
-    pub mod batch;
-    pub mod burnable;
-    pub mod enumerable;
-    pub mod metadata;
-    pub mod mintable;
-    pub mod payable_mint;
-    pub mod uri_storage;
+#[openbrush::wrapper]
+pub type AFT37PayableMintRef = dyn AFT37PayableMint;
+
+#[openbrush::trait_definition]
+pub trait AFT37PayableMint {
+    #[ink(message, payable)]
+    fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error>;
+
+    #[ink(message)]
+    fn withdraw(&mut self) -> Result<(), AFT37Error>;
+
+    #[ink(message)]
+    fn max_supply(&self, id: Id) -> Result<u64, AFT37Error>;
+
+    #[ink(message)]
+    fn set_max_supply(&mut self, id: Id, max_supply: u64) -> Result<(), AFT37Error>;
+
+    #[ink(message)]
+    fn price(&self, token_id: Id) -> Result<Balance, AFT37Error>;
+
+    #[ink(message)]
+    fn set_price(&mut self, id: Id, price: Balance) -> Result<(), AFT37Error>;
 }

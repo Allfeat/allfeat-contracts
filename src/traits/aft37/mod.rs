@@ -29,5 +29,6 @@ pub mod extensions {
     pub mod enumerable;
     pub mod metadata;
     pub mod mintable;
+    pub mod payable_mint;
     pub mod uri_storage;
 }
