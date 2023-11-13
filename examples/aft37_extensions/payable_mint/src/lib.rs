@@ -4,7 +4,6 @@
 #[allfeat_contracts::implementation(AFT37, AFT37PayableMint, AFT37Metadata, AFT37Enumerable)]
 #[allfeat_contracts::contract]
 pub mod my_aft37_payable_mint {
-    use ink::prelude::string::String as PreludeString;
     use openbrush::traits::{Storage, String};
 
     #[ink(storage)]
@@ -65,7 +64,7 @@ pub mod my_aft37_payable_mint {
     pub mod tests {
         use allfeat_contracts::aft37::{
             aft37_external::AFT37,
-            extensions::payable_mint::aft37payablemint_external::AFT37PayableMint, AFT37Error::*,
+            extensions::payable_mint::aft37payablemint_external::AFT37PayableMint,
         };
         use ink::env::test;
 

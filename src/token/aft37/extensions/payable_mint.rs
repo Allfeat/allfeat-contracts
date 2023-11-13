@@ -34,7 +34,7 @@ use openbrush::{
 #[openbrush::storage_item]
 pub struct Data {
     pub price_per_mint: Mapping<Id, Balance>,
-    pub max_supply: Mapping<Id, u64>,
+    pub max_supply: Mapping<Id, u32>,
 }
 
 pub trait AFT37PayableMintImpl:
@@ -69,7 +69,7 @@ pub trait AFT37PayableMintImpl:
 
     /// Sets the max supply for the given token
     #[openbrush::modifiers(only_owner)]
-    fn set_max_supply(&mut self, id: Id, max_supply: u64) -> Result<(), AFT37Error> {
+    fn set_max_supply(&mut self, id: Id, max_supply: u32) -> Result<(), AFT37Error> {
         self.data::<Data>().max_supply.insert(id, &max_supply);
 
         Ok(())
@@ -92,7 +92,7 @@ pub trait AFT37PayableMintImpl:
     }
 
     /// Get max supply of tokens
-    fn max_supply(&self, id: Id) -> Result<u64, AFT37Error> {
+    fn max_supply(&self, id: Id) -> Result<u32, AFT37Error> {
         self.data::<Data>()
             .max_supply
             .get(id)
@@ -137,11 +137,11 @@ pub trait Internal: Storage<Data> + aft37::Internal + aft37::aft37::AFT37Impl {
 
             if let Some(amount) = token_supply.checked_add(*mint_amount) {
                 if amount
-                    >= self
+                    > self
                         .data::<Data>()
                         .max_supply
                         .get(id)
-                        .ok_or(AFT37Error::TokenNotExists)? as u128
+                        .ok_or(AFT37Error::TokenNotExists)? as Balance
                 {
                     return Err(AFT37Error::Custom(String::from("CollectionIsFull")));
                 }

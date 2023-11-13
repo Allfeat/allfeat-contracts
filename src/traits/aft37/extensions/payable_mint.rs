@@ -37,10 +37,10 @@ pub trait AFT37PayableMint {
     fn withdraw(&mut self) -> Result<(), AFT37Error>;
 
     #[ink(message)]
-    fn max_supply(&self, id: Id) -> Result<u64, AFT37Error>;
+    fn max_supply(&self, id: Id) -> Result<u32, AFT37Error>;
 
     #[ink(message)]
-    fn set_max_supply(&mut self, id: Id, max_supply: u64) -> Result<(), AFT37Error>;
+    fn set_max_supply(&mut self, id: Id, max_supply: u32) -> Result<(), AFT37Error>;
 
     #[ink(message)]
     fn price(&self, token_id: Id) -> Result<Balance, AFT37Error>;

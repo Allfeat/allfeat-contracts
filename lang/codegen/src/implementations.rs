@@ -1792,7 +1792,7 @@ pub(crate) fn impl_aft37_payable_mint(impl_args: &mut ImplArgs) {
             }
 
             #[ink(message)]
-            fn set_max_supply(&mut self, id: Id, max_supply: u64) -> Result<(), AFT37Error> {
+            fn set_max_supply(&mut self, id: Id, max_supply: u32) -> Result<(), AFT37Error> {
                 AFT37PayableMintImpl::set_max_supply(self, id, max_supply)
             }
 
@@ -1802,7 +1802,7 @@ pub(crate) fn impl_aft37_payable_mint(impl_args: &mut ImplArgs) {
             }
 
             #[ink(message)]
-            fn max_supply(&self, id: Id) -> Result<u64, AFT37Error> {
+            fn max_supply(&self, id: Id) -> Result<u32, AFT37Error> {
                 AFT37PayableMintImpl::max_supply(self, id)
             }
 
