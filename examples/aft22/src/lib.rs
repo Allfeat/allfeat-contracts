@@ -18,6 +18,7 @@ pub struct HatedStorage {
 #[allfeat_contracts::contract]
 pub mod my_aft22 {
     use crate::*;
+    use openbrush::traits::String;
 
     #[ink(storage)]
     #[derive(Storage)]
@@ -35,7 +36,7 @@ pub mod my_aft22 {
         to: Option<&AccountId>,
         _amount: &Balance,
     ) -> Result<(), AFT22Error> {
-        if to == Some(&self.hated_storage.hated_account) {
+        if _to == Some(&self.hated_storage.hated_account) {
             return Err(AFT22Error::Custom(String::from("I hate this account!")));
         }
         Ok(())

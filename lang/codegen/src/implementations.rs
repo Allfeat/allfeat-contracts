@@ -72,7 +72,7 @@ pub(crate) fn impl_aft22(impl_args: &mut ImplArgs, capped: bool) {
         syn::parse2::<syn::ItemImpl>(quote!(
             impl aft22::InternalImpl for #storage_struct_name {
                 fn _max_supply(&self) -> Balance {
-                    capped::Internal::_cap(&self)
+                    capped::Internal::_cap(self)
                 }
             }
         ))
