@@ -11,6 +11,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[build]
+rustflags = ["-Z", "threads=8"]
+
 [dependencies]
 # Import ink!
 ink = { version = "4.3.0", default-features = false }

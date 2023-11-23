@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test artists extension (ink)" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="test --features ink" />
+  <configuration default="false" name="Test artists extension" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+    <option name="command" value="test" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$/extensions/artists" />
     <option name="emulateTerminal" value="false" />
     <option name="channel" value="DEFAULT" />

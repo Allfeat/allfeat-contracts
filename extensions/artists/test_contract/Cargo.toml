@@ -12,7 +12,7 @@ ink = { version = "4.3.0", default-features = false}
 scale = { package = "parity-scale-codec", version = "3.2.2", default-features = false, features = ["derive"] }
 scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
 
-allfeat_contracts_extensions_artists = { path = "..", version = "0.1.0", default-features = false, features = ["ink"] }
+allfeat_contracts_extensions_artists = { path = "..", version = "0.1.0", default-features = false }
 
 [dev-dependencies]
 ink_e2e = "4.3.0"
@@ -20,7 +20,6 @@ ink_e2e = "4.3.0"
 [lib]
 name = "artists_extension_wrapper"
 path = "src/lib.rs"
-
 
 [features]
 default = ["std"]

@@ -10,21 +10,8 @@ path = "src/lib.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# ink side
-ink-crate = { package = "ink", version = "4.3.0", default-features = false, optional = true }
-
-# substrate side
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.1.0", optional = true }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.1.0", optional = true }
-log = { version = "0.4.17", default-features = false, optional = true }
-
-pallet-artists = { version = "1.0.0-dev", default-features = false, git = "https://github.com/Allfeat/pallet-artists.git", branch = "master", optional = true }
-pallet-contracts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.1.0", optional = true }
-pallet-contracts-primitives = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.1.0", optional = true }
-
-sp-core = { version = "21.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.1.0", optional = true }
-sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.1.0", optional = true }
-sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.1.0", optional = true }
+# ink
+ink = { version = "4.3.0", default-features = false }
 
 # general
 scale = { package = "parity-scale-codec", version = "3.6.1", default-features = false, features = [
@@ -35,34 +22,13 @@ scale-info = { version = "2.6.0", default-features = false, features = [
     "derive",
 ], optional = true }
 
+genres-registry = { version = "1.0.0-dev", default-features = false, git = "https://github.com/Allfeat/genres-registry.git", branch = "master", features = ["ink"] }
 
 [features]
 default = ["std"]
 std = [
-    "ink-crate?/std",
+    "ink/std",
     "scale/std",
     "scale-info/std",
-    "sp-runtime?/std",
-    "sp-std?/std",
-    "sp-core?/std",
-    "pallet-contracts-primitives?/std",
-    "pallet-contracts?/std",
-    "pallet-artists?/std",
-    "log?/std",
-    "frame-system?/std",
-    "frame-support?/std"
-]
-substrate = [
-    "frame-support",
-    "frame-system",
-    "log",
-    "pallet-artists",
-    "pallet-contracts",
-    "pallet-contracts-primitives",
-    "sp-core",
-    "sp-std",
-    "sp-runtime"
-]
-ink = [
-    "ink-crate",
+    "genres-registry/std"
 ]

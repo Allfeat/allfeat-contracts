@@ -21,11 +21,48 @@
 
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-pub mod types;
+use genres_registry::MusicGenre;
+use ink::env::{DefaultEnvironment, Environment};
+use ink::prelude::string::String;
+use ink::prelude::vec::Vec;
+use scale::{Decode, Encode};
 
-#[cfg(feature = "substrate")]
-pub mod errors;
-#[cfg(feature = "ink")]
-pub mod extension;
-#[cfg(feature = "substrate")]
-pub mod impl_runtime;
+pub type AccountId = <DefaultEnvironment as Environment>::AccountId;
+pub type Balance = <DefaultEnvironment as Environment>::Balance;
+pub type BlockNumber = <DefaultEnvironment as Environment>::BlockNumber;
+pub type Hash = <DefaultEnvironment as Environment>::Hash;
+
+/// Implementation of all functions contained in the pallet_artists available to ink! contracts.
+pub struct ArtistExtension;
+
+impl ArtistExtension {
+    // Chain State Queries
+    pub fn artists_by_id(account_id: AccountId) -> Option<ArtistDataOutput> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0051u32)
+            .input::<AccountId>()
+            .output::<Option<ArtistDataOutput>, false>()
+            .ignore_error_code()
+            .call(&account_id)
+    }
+    pub fn artists_by_name(name: String) -> Option<ArtistDataOutput> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0052u32)
+            .input::<String>()
+            .output::<Option<ArtistDataOutput>, false>()
+            .ignore_error_code()
+            .call(&name)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct ArtistDataOutput {
+    pub owner: AccountId,
+    pub registered_at: BlockNumber,
+    pub verified_at: Option<BlockNumber>,
+    pub main_name: Vec<u8>,
+    pub alias: Option<Vec<u8>>,
+    pub genres: Vec<MusicGenre>,
+    pub description: Option<Hash>,
+    pub assets: Vec<Hash>,
+    pub contracts: Vec<AccountId>,
+}
