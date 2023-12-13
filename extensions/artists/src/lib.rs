@@ -23,7 +23,6 @@
 
 use genres_registry::MusicGenre;
 use ink::env::{DefaultEnvironment, Environment};
-use ink::prelude::string::String;
 use ink::prelude::vec::Vec;
 use scale::{Decode, Encode};
 
@@ -37,19 +36,12 @@ pub struct ArtistExtension;
 
 impl ArtistExtension {
     // Chain State Queries
-    pub fn artists_by_id(account_id: AccountId) -> Option<ArtistDataOutput> {
+    pub fn artist(account_id: AccountId) -> Option<ArtistDataOutput> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0051u32)
             .input::<AccountId>()
             .output::<Option<ArtistDataOutput>, false>()
             .ignore_error_code()
             .call(&account_id)
-    }
-    pub fn artists_by_name(name: String) -> Option<ArtistDataOutput> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0052u32)
-            .input::<String>()
-            .output::<Option<ArtistDataOutput>, false>()
-            .ignore_error_code()
-            .call(&name)
     }
 }
 
