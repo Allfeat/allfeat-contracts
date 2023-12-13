@@ -14,20 +14,6 @@ pub mod my_aft22_capped {
         cap: capped::Data,
     }
 
-    #[overrider(aft22::AFT22Transfer)]
-    fn _before_token_transfer(
-        &mut self,
-        from: Option<&AccountId>,
-        _: Option<&AccountId>,
-        amount: &Balance,
-    ) -> Result<(), AFT22Error> {
-        // `is_none` means that it is minting
-        if from.is_none() && capped::Internal::_is_cap_exceeded(self, amount) {
-            return Err(AFT22Error::Custom(String::from("Cap exceeded")));
-        }
-        Ok(())
-    }
-
     impl Contract {
         /// Constructor which mints `initial_supply` of the token to sender
         /// Will set the token's cap to `cap`
