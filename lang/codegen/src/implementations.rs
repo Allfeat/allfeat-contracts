@@ -1792,6 +1792,11 @@ pub(crate) fn impl_aft37_payable_mint(impl_args: &mut ImplArgs) {
             }
 
             #[ink(message)]
+            fn total_balance(&self) -> Result<Balance, AFT37Error> {
+                AFT37PayableMintImpl::total_balance(self)
+            }
+
+            #[ink(message)]
             fn set_max_supply(&mut self, id: Id, max_supply: u32) -> Result<(), AFT37Error> {
                 AFT37PayableMintImpl::set_max_supply(self, id, max_supply)
             }

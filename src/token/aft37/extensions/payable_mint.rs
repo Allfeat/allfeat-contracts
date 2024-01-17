@@ -53,6 +53,18 @@ pub trait AFT37PayableMintImpl:
         Ok(())
     }
 
+    /// Returns the total balance of the contract
+    fn total_balance(&self) -> Result<Balance, AFT37Error> {
+        if self.data::<ownable::Data>().owner.get().unwrap() != Some(Self::env().caller()) {
+            return Err(AFT37Error::NotAllowed);
+        }
+
+        Self::env()
+            .balance()
+            .checked_sub(Self::env().minimum_balance())
+            .ok_or(AFT37Error::Custom(String::from("TotalBalanceOverflow")))
+    }
+
     /// Withdraws funds to contract owner
     #[openbrush::modifiers(only_owner)]
     fn withdraw(&mut self) -> Result<(), AFT37Error> {
@@ -64,6 +76,7 @@ pub trait AFT37PayableMintImpl:
         Self::env()
             .transfer(owner, current_balance)
             .map_err(|_| AFT37Error::Custom(String::from("WithdrawalFailed")))?;
+
         Ok(())
     }
 

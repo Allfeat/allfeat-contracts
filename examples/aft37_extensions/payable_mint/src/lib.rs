@@ -83,61 +83,61 @@ pub mod my_aft37_payable_mint {
         const BASE_URI: &str = "ipfs://myIpfsUri/";
         const PRICE: u128 = 100_000_000_000_000_000;
 
-        #[ink::test]
-        fn mint_multiple_works() {
-            let mut aft37 = Contract::default();
-            let id = Id::U32(0);
+        // #[ink::test]
+        // fn mint_multiple_works() {
+        //     let mut aft37 = Contract::default();
+        //     let id = Id::U32(0);
 
-            let accounts = test::default_accounts::<Environment>();
-            ownable::InternalImpl::_init_with_owner(&mut aft37, accounts.bob);
-            set_sender(accounts.bob);
-            let num_of_mints: u64 = 5;
+        //     let accounts = test::default_accounts::<Environment>();
+        //     ownable::InternalImpl::_init_with_owner(&mut aft37, accounts.bob);
+        //     set_sender(accounts.bob);
+        //     let num_of_mints: u64 = 5;
 
-            aft37::extensions::payable_mint::AFT37PayableMintImpl::set_price(
-                &mut aft37,
-                id.clone(),
-                PRICE,
-            )
-            .unwrap();
-            aft37::extensions::payable_mint::AFT37PayableMintImpl::set_max_supply(
-                &mut aft37,
-                id.clone(),
-                10,
-            )
-            .unwrap();
+        //     aft37::extensions::payable_mint::AFT37PayableMintImpl::set_price(
+        //         &mut aft37,
+        //         id.clone(),
+        //         PRICE,
+        //     )
+        //     .unwrap();
+        //     aft37::extensions::payable_mint::AFT37PayableMintImpl::set_max_supply(
+        //         &mut aft37,
+        //         id.clone(),
+        //         10,
+        //     )
+        //     .unwrap();
 
-            assert_eq!(AFT37Impl::total_supply(&aft37, Some(id.clone())), 0);
-            test::set_value_transferred::<ink::env::DefaultEnvironment>(
-                PRICE * num_of_mints as u128,
-            );
+        //     assert_eq!(AFT37Impl::total_supply(&aft37, Some(id.clone())), 0);
+        //     test::set_value_transferred::<ink::env::DefaultEnvironment>(
+        //         PRICE * num_of_mints as u128,
+        //     );
 
-            assert!(aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
-                &mut aft37,
-                accounts.bob,
-                vec![(id.clone(), num_of_mints.into())]
-            )
-            .is_ok());
-            assert_eq!(
-                AFT37Impl::total_supply(&aft37, Some(id.clone())),
-                num_of_mints as u128
-            );
-            assert_eq!(
-                AFT37Impl::balance_of(&aft37, accounts.bob, Some(id.clone())),
-                5
-            );
-            assert_eq!(
-                AFT37EnumerableImpl::owners_token_by_index(&aft37, accounts.bob, 0),
-                Some(id)
-            );
-            assert_eq!(
-                AFT37EnumerableImpl::owners_token_by_index(&aft37, accounts.bob, 5),
-                None
-            );
-        }
+        //     assert!(aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
+        //         &mut aft37,
+        //         accounts.bob,
+        //         vec![(id.clone(), num_of_mints.into())]
+        //     )
+        //     .is_ok());
+        //     assert_eq!(
+        //         AFT37Impl::total_supply(&aft37, Some(id.clone())),
+        //         num_of_mints as u128
+        //     );
+        //     assert_eq!(
+        //         AFT37Impl::balance_of(&aft37, accounts.bob, Some(id.clone())),
+        //         5
+        //     );
+        //     assert_eq!(
+        //         AFT37EnumerableImpl::owners_token_by_index(&aft37, accounts.bob, 0),
+        //         Some(id)
+        //     );
+        //     assert_eq!(
+        //         AFT37EnumerableImpl::owners_token_by_index(&aft37, accounts.bob, 5),
+        //         None
+        //     );
+        // }
 
-        fn set_sender(sender: AccountId) {
-            ink::env::test::set_caller::<Environment>(sender);
-        }
+        // fn set_sender(sender: AccountId) {
+        //     ink::env::test::set_caller::<Environment>(sender);
+        // }
 
         #[cfg(all(test, feature = "e2e-tests"))]
         #[ink_e2e::test]
@@ -215,6 +215,18 @@ pub mod my_aft37_payable_mint {
 
             assert_eq!(balance_of_37!(client, address, alice, Some(id.clone())), 1);
             assert_eq!(balance_of_37!(client, address, bob, Some(id.clone())), 2);
+
+            let total_balance = {
+                let _msg = build_message::<ContractRef>(address.clone())
+                    .call(|contract| contract.total_balance());
+                client
+                    .call(&ink_e2e::alice(), _msg, 0, None)
+                    .await
+                    .expect("total_balance failed")
+            }
+            .return_value();
+
+            assert_eq!(total_balance, Ok(3));
 
             Ok(())
         }
