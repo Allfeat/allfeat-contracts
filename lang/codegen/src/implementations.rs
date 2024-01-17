@@ -1766,3 +1766,69 @@ pub(crate) fn impl_aft37_uri_storage(impl_args: &mut ImplArgs) {
     impl_args.items.push(syn::Item::Impl(uri_storage_impl));
     impl_args.items.push(syn::Item::Impl(uri_storage));
 }
+
+pub(crate) fn impl_aft37_payable_mint(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let internal_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl aft37::extensions::payable_mint::Internal for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let payable_mint_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37PayableMintImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut payable_mint = syn::parse2::<syn::ItemImpl>(quote!(
+        impl AFT37PayableMint for #storage_struct_name {
+            #[ink(message, payable)]
+            fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), AFT37Error> {
+                AFT37PayableMintImpl::mint(self, to, ids_amounts)
+            }
+
+            #[ink(message)]
+            fn withdraw(&mut self) -> Result<(), AFT37Error> {
+                AFT37PayableMintImpl::withdraw(self)
+            }
+
+            #[ink(message)]
+            fn total_balance(&self) -> Result<Balance, AFT37Error> {
+                AFT37PayableMintImpl::total_balance(self)
+            }
+
+            #[ink(message)]
+            fn set_max_supply(&mut self, id: Id, max_supply: u32) -> Result<(), AFT37Error> {
+                AFT37PayableMintImpl::set_max_supply(self, id, max_supply)
+            }
+
+            #[ink(message)]
+            fn set_price(&mut self, id: Id, price: Balance) -> Result<(), AFT37Error> {
+                AFT37PayableMintImpl::set_price(self, id, price)
+            }
+
+            #[ink(message)]
+            fn max_supply(&self, id: Id) -> Result<u32, AFT37Error> {
+                AFT37PayableMintImpl::max_supply(self, id)
+            }
+
+            #[ink(message)]
+            fn price(&self, id: Id) -> Result<Balance, AFT37Error> {
+                AFT37PayableMintImpl::price(self, id)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+        use allfeat_contracts::aft37::extensions::payable_mint::*;
+    ))
+    .expect("Should parse");
+    impl_args.imports.insert("AFT37PayableMint", import);
+    impl_args.vec_import();
+
+    override_functions("AFT37PayableMint", &mut payable_mint, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(internal_impl));
+    impl_args.items.push(syn::Item::Impl(payable_mint_impl));
+    impl_args.items.push(syn::Item::Impl(payable_mint));
+}
